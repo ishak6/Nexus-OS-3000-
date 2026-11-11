@@ -45,6 +45,7 @@ jobs:
             --mode debian \
             --distribution trixie \
             --initramfs live-boot \
+            --initsystem systemd \
             --architectures amd64 \
             --linux-packages none \
             --binary-images iso-hybrid \
