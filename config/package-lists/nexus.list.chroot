@@ -31,6 +31,8 @@ apparmor-utils
 bubblewrap
 nftables
 firejail
+# Boot and ISO utilities needed in the live-build target environment
+syslinux-utils
 # Developer and archive utilities
 build-essential
 pkg-config

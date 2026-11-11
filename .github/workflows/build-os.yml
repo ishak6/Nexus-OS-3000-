@@ -31,6 +31,8 @@ jobs:
             live-build debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
             isolinux syslinux-common syslinux-utils ca-certificates
+          command -v isohybrid
+          isohybrid --version
 
       - name: Configure Debian Trixie Live
         run: |
