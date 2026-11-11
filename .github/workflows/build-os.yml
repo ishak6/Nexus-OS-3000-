@@ -39,7 +39,7 @@ jobs:
             --architectures amd64 \
             --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
-            --bootloaders "grub-efi,syslinux" \
+            --bootloader grub-efi \
             --debian-installer false \
             --apt-recommends true \
             --apt-secure true \
