@@ -47,7 +47,7 @@ jobs:
             live-build=1:20250505+deb13u1 \
             debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
-            isolinux syslinux-common syslinux-utils ca-certificates \\
+            isolinux syslinux-common syslinux-utils ca-certificates \
             debian-archive-keyring
           lb --version
           command -v xorriso
