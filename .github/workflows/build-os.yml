@@ -19,22 +19,24 @@ jobs:
   build-iso:
     name: Build Debian-based live ISO
     runs-on: ubuntu-24.04
+    container:
+      image: debian:trixie
     timeout-minutes: 120
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Install live-build dependencies
+      - name: Install Debian Live Build dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             live-build debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
-            isolinux syslinux-common
+            isolinux syslinux-common ca-certificates
 
       - name: Configure Debian Live
         run: |
-          sudo lb config \
+          lb config \
             --distribution trixie \
             --architectures amd64 \
             --binary-images iso-hybrid \
@@ -46,7 +48,7 @@ jobs:
             --memtest none
 
       - name: Build ISO
-        run: sudo lb build
+        run: lb build
 
       - name: Verify ISO output
         run: |
