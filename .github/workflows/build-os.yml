@@ -37,6 +37,8 @@ jobs:
           sudo lb config \
             --distribution trixie \
             --architectures amd64 \
+            --linux-packages linux-image \
+            --linux-flavours amd64 \
             --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
             --bootloader grub-efi \
