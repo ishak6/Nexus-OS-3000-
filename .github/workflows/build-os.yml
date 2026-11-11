@@ -34,6 +34,13 @@ jobs:
 
       - name: Configure Debian Trixie Live
         run: |
+          mkdir -p config/archives
+          cat > config/archives/nexus-security.list.chroot <<'EOF'
+          deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
+          cat > config/archives/nexus-security.list.binary <<'EOF'
+          deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
           sudo lb config \
             --mode debian \
             --distribution trixie \
@@ -47,11 +54,10 @@ jobs:
             --debian-installer false \
             --apt-recommends true \
             --apt-secure true \
+            --security false \
             --mirror-bootstrap http://deb.debian.org/debian \
             --mirror-chroot http://deb.debian.org/debian \
-            --mirror-chroot-security http://security.debian.org/debian-security \
             --mirror-binary http://deb.debian.org/debian \
-            --mirror-binary-security http://security.debian.org/debian-security \
             --memtest none
 
       - name: Build ISO
