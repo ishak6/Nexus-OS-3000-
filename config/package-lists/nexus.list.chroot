@@ -1,0 +1,43 @@
+# Core live system
+live-boot
+live-config
+live-config-systemd
+linux-image-amd64
+systemd
+systemd-sysv
+dbus
+sudo
+polkitd
+ca-certificates
+curl
+wget
+git
+less
+nano
+vim-tiny
+bash-completion
+network-manager
+iproute2
+iputils-ping
+openssh-client
+# Desktop foundation
+task-xfce-desktop
+lightdm
+xserver-xorg
+xserver-xorg-video-all
+xserver-xorg-input-all
+# Initial security foundation (not a complete antivirus)
+apparmor
+apparmor-utils
+bubblewrap
+nftables
+firejail
+# Developer and archive utilities
+build-essential
+pkg-config
+unzip
+zip
+p7zip-full
+# Firmware commonly needed by virtual machines and hardware
+firmware-linux-free
+firmware-misc-nonfree
