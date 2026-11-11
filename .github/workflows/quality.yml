@@ -1,0 +1,32 @@
+name: Quality Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check whitespace errors
+        run: git diff --check
+
+      - name: Validate required project files
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s config/package-lists/nexus.list.chroot
+          grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
+          grep -q "distribution trixie" .github/workflows/build-os.yml
+
+      - name: Report source tree
+        run: |
+          echo "Tracked project files:"
+          git ls-files
