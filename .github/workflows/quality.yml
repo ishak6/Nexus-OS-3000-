@@ -28,6 +28,8 @@ jobs:
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
           grep -q -- 'live-build=1:20250505+deb13u1' .github/workflows/build-os.yml
+          grep -q 'Pin-Priority: 50' .github/workflows/build-os.yml
+          grep -q 'Pin-Priority: 1001' .github/workflows/build-os.yml
           grep -q -- '--bootloaders "grub-pc grub-efi"' .github/workflows/build-os.yml
           grep -q "report_el_torito plain" .github/workflows/build-os.yml
           python3 -m json.tool harness/policy/manifest.schema.json >/dev/null

@@ -33,6 +33,15 @@ jobs:
             | sudo tee /etc/apt/keyrings/debian-trixie.gpg >/dev/null
           echo "deb [signed-by=/etc/apt/keyrings/debian-trixie.gpg] http://deb.debian.org/debian trixie main" \
             | sudo tee /etc/apt/sources.list.d/debian-trixie.list >/dev/null
+          cat <<'EOF' | sudo tee /etc/apt/preferences.d/debian-trixie >/dev/null
+          Package: *
+          Pin: release n=trixie
+          Pin-Priority: 50
+
+          Package: live-build
+          Pin: release n=trixie
+          Pin-Priority: 1001
+          EOF
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             live-build=1:20250505+deb13u1 \
