@@ -8,15 +8,10 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup()
 
-qt_add_executable(nexus-lumen
-    main.cpp
-)
-
-qt_add_qml_module(nexus-lumen
-    URI Nexus.Lumen
-    VERSION 1.0
-    QML_FILES
-        qml/Main.qml
+qt_add_executable(nexus-lumen main.cpp)
+qt_add_resources(nexus-lumen "lumen_qml"
+    PREFIX "/"
+    FILES qml/Main.qml
 )
 
 install(TARGETS nexus-lumen RUNTIME DESTINATION bin)
