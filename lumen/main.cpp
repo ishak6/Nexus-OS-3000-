@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QCoreApplication>
+#include <QUrl>
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
         &app,
         [] { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
-    engine.loadFromModule("Nexus.Lumen", "Main");
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
     return app.exec();
 }
