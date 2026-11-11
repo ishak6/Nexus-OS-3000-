@@ -27,7 +27,7 @@ jobs:
           test -s scripts/security-audit.sh
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
-          test -s lumen/qml/Main.qml
+          test -s lumen/qml/Main.qml\n          test -s pulse/telemetry.py
           test -s docs/LUMEN_IMPLEMENTATION.md
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
@@ -44,7 +44,7 @@ jobs:
           set -euo pipefail
           python3 -m compileall -q harness
           python3 harness/policy/validate_manifest.py harness/examples/hello-app.manifest.json
-          python3 -m unittest discover -s harness/tests -v
+          python3 -m unittest discover -s harness/tests -v\n          python3 -m unittest discover -s pulse/tests -v
       - name: Validate diagnostic shell script syntax
         run: bash -n scripts/security-audit.sh
       - name: Install Qt 6 build and QML runtime dependencies
