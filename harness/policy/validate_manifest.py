@@ -32,7 +32,7 @@ def validate(data):
     if not isinstance(name, str) or not name.strip() or len(name) > 80:
         errors.append("name must be non-empty and at most 80 characters")
     version = data.get("version")
-    if not isinstance(version, str) or not re.fullmatch(r"[0-9]+\\.[0-9]+\\.[0-9]+", version):
+    if not isinstance(version, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
         errors.append("version must use MAJOR.MINOR.PATCH")
     caps = data.get("capabilities")
     if not isinstance(caps, list):

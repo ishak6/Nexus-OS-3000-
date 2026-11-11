@@ -30,7 +30,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             live-build debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
-            isolinux syslinux-common ca-certificates
+            isolinux syslinux-common syslinux-utils ca-certificates
 
       - name: Configure Debian Trixie Live
         run: |
