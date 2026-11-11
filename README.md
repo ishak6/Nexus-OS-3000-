@@ -41,6 +41,8 @@ These are foundations, not a complete OS security stack. Archive inspection is n
 
 ## Documentation
 
+- Complete system upgrade catalog: docs/NEXUS_SYSTEM_CATALOG.md
+
 - Architecture: docs/ARCHITECTURE.md
 - Threat model: docs/THREAT_MODEL.md
 - Security baseline: docs/SECURITY_BASELINE.md
