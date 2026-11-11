@@ -1,0 +1,83 @@
+name: Build Nexus OS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "config/**"
+      - ".github/workflows/build-os.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nexus-os-iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-iso:
+    name: Build Debian-based live ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install live-build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            live-build debootstrap squashfs-tools xorriso \
+            grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
+            isolinux syslinux-common
+
+      - name: Configure Debian Live
+        run: |
+          sudo lb config \
+            --distribution trixie \
+            --architectures amd64 \
+            --binary-images iso-hybrid \
+            --archive-areas "main contrib non-free non-free-firmware" \
+            --bootloaders "grub-efi,syslinux" \
+            --debian-installer false \
+            --apt-recommends true \
+            --apt-secure true \
+            --memtest none
+
+      - name: Build ISO
+        run: sudo lb build
+
+      - name: Verify ISO output
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          images=( *.iso )
+          if [ "${#images[@]}" -eq 0 ]; then
+            echo "No ISO image was produced." >&2
+            exit 1
+          fi
+          for image in "${images[@]}"; do
+            test -s "$image"
+            sha256sum "$image"
+          done
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: "*.iso"
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-build-logs
+          path: |
+            build.log
+            *.log
+            config/
+          if-no-files-found: ignore
+          retention-days: 7
