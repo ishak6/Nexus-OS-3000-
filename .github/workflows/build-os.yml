@@ -35,7 +35,9 @@ jobs:
       - name: Configure Debian Trixie Live
         run: |
           sudo lb config \
+            --mode debian \
             --distribution trixie \
+            --initramfs live-boot \
             --architectures amd64 \
             --linux-packages linux-image \
             --linux-flavours amd64 \
