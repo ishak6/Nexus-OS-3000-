@@ -31,6 +31,7 @@ jobs:
             live-build debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
             isolinux syslinux-common syslinux-utils ca-certificates
+          command -v xorriso
           command -v isohybrid
           isohybrid --version
 
@@ -52,7 +53,7 @@ jobs:
             --linux-packages none \
             --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
-            --bootloader grub-efi \
+            --bootloaders "grub-pc grub-efi" \
             --debian-installer false \
             --apt-recommends false \
             --apt-secure true \
@@ -63,9 +64,9 @@ jobs:
             --memtest none
 
       - name: Build ISO
-        run: sudo lb build
+        run: sudo lb build 2>&1 | tee build.log
 
-      - name: Verify ISO and generate checksum
+      - name: Verify ISO boot entries and generate checksum
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -76,6 +77,16 @@ jobs:
           fi
           for image in "${images[@]}"; do
             test -s "$image"
+            report="$(xorriso -indev "$image" -report_el_torito plain -report_system_area plain 2>&1)"
+            printf '%s\n' "$report"
+            if ! grep -Eqi 'BIOS' <<<"$report"; then
+              echo "ISO is missing a legacy BIOS El Torito boot entry." >&2
+              exit 1
+            fi
+            if ! grep -Eqi 'UEFI' <<<"$report"; then
+              echo "ISO is missing a UEFI El Torito boot entry." >&2
+              exit 1
+            fi
             sha256sum "$image" | tee "$image.sha256"
           done
           sudo chown -R "$USER":"$USER" .
