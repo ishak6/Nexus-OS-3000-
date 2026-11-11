@@ -47,6 +47,10 @@ The initial build targets **Debian 13 (trixie), amd64**.
 
 The first image is a development live environment, not a production release or a safe-to-install daily-driver OS.
 
+## Security baseline
+
+A conservative sysctl baseline is staged in the live image configuration. It is not yet runtime-verified; see [docs/SECURITY_BASELINE.md](docs/SECURITY_BASELINE.md) for scope and VM verification steps. Package presence alone is not proof that a security control is active.
+
 ## Development status
 
 See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
