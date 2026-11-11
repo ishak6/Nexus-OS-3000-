@@ -37,7 +37,7 @@ build-essential
 pkg-config
 unzip
 zip
-p7zip-full
+7zip
 # Firmware commonly needed by virtual machines and hardware
 firmware-linux-free
 firmware-misc-nonfree
