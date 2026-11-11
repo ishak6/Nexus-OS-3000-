@@ -25,6 +25,10 @@ jobs:
           test -s harness/policy/default-policy.json
           test -s harness/inspection/inspect_archive.py
           test -s scripts/security-audit.sh
+          test -s lumen/CMakeLists.txt
+          test -s lumen/main.cpp
+          test -s lumen/qml/Main.qml
+          test -s docs/LUMEN_IMPLEMENTATION.md
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
           grep -q -- 'live-build=1:20250505+deb13u1' .github/workflows/build-os.yml
@@ -43,5 +47,24 @@ jobs:
           python3 -m unittest discover -s harness/tests -v
       - name: Validate diagnostic shell script syntax
         run: bash -n scripts/security-audit.sh
+      - name: Install Qt 6 build and QML runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake ninja-build qt6-base-dev qt6-declarative-dev qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-window
+      - name: Build LUMEN prototype
+        run: |
+          set -euo pipefail
+          cmake -S lumen -B build/lumen -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/lumen --parallel 2
+      - name: LUMEN offscreen startup smoke test
+        run: |
+          set +e
+          QT_QPA_PLATFORM=offscreen timeout 8s ./build/lumen/nexus-lumen
+          result=$?
+          set -e
+          if [ "$result" -ne 124 ]; then
+            echo "LUMEN did not remain running during the 8-second smoke test (exit: $result)." >&2
+            exit 1
+          fi
       - name: Report source tree
         run: git ls-files
