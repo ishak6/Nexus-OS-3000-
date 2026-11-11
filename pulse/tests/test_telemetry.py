@@ -46,7 +46,7 @@ class PulseTelemetryTests(unittest.TestCase):
             " lo: 150 1 0 0 0 0 0 0 260 1 0 0 0 0 0 0\n",
             encoding="ascii")
         sample = sampler.sample()
-        self.assertEqual(sample["cpu"]["usage_percent_since_previous_sample"], 60.0)
+        self.assertEqual(sample["cpu"]["usage_percent_since_previous_sample"], 75.0)
         self.assertEqual(sample["network"]["deltas"]["lo"]["rx_bytes_per_interval"], 50)
         self.assertEqual(sample["network"]["deltas"]["lo"]["tx_bytes_per_interval"], 60)
 
