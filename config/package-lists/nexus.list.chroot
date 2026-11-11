@@ -33,7 +33,9 @@ nftables
 firejail
 # Boot and ISO utilities needed in the live-build target environment
 syslinux-utils
-# Nexus Pulse read-only telemetry runtime\npython3\n# Developer and archive utilities
+# Nexus Pulse read-only telemetry runtime
+python3
+# Developer and archive utilities
 build-essential
 pkg-config
 unzip
