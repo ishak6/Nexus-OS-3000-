@@ -19,24 +19,22 @@ jobs:
   build-iso:
     name: Build Debian-based live ISO
     runs-on: ubuntu-24.04
-    container:
-      image: debian:trixie
     timeout-minutes: 120
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Install Debian Live Build dependencies
+      - name: Install live-build tooling
         run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             live-build debootstrap squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
             isolinux syslinux-common ca-certificates
 
-      - name: Configure Debian Live
+      - name: Configure Debian Trixie Live
         run: |
-          lb config \
+          sudo lb config \
             --distribution trixie \
             --architectures amd64 \
             --binary-images iso-hybrid \
@@ -45,12 +43,17 @@ jobs:
             --debian-installer false \
             --apt-recommends true \
             --apt-secure true \
+            --mirror-bootstrap http://deb.debian.org/debian \
+            --mirror-chroot http://deb.debian.org/debian \
+            --mirror-chroot-security http://security.debian.org/debian-security \
+            --mirror-binary http://deb.debian.org/debian \
+            --mirror-binary-security http://security.debian.org/debian-security \
             --memtest none
 
       - name: Build ISO
-        run: lb build
+        run: sudo lb build
 
-      - name: Verify ISO output
+      - name: Verify ISO and generate checksum
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -61,14 +64,17 @@ jobs:
           fi
           for image in "${images[@]}"; do
             test -s "$image"
-            sha256sum "$image"
+            sha256sum "$image" | tee "$image.sha256"
           done
+          sudo chown -R "$USER":"$USER" .
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: nexus-os-3000-iso
-          path: "*.iso"
+          path: |
+            *.iso
+            *.iso.sha256
           if-no-files-found: error
           retention-days: 14
 
