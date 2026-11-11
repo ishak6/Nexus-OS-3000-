@@ -14,23 +14,29 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Check whitespace errors
-        run: git diff --check
-      - name: Validate required project files
+      - name: Check commit whitespace
+        run: git diff --check HEAD^ HEAD
+      - name: Validate repository structure and policy JSON
         run: |
           set -euo pipefail
           test -s README.md
           test -s config/package-lists/nexus.list.chroot
           test -s harness/policy/manifest.schema.json
           test -s harness/policy/default-policy.json
+          test -s harness/inspection/inspect_archive.py
+          test -s scripts/security-audit.sh
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
-      - name: Validate Harness manifest and policy tests
+          python3 -m json.tool harness/policy/manifest.schema.json >/dev/null
+          python3 -m json.tool harness/policy/default-policy.json >/dev/null
+          python3 -m json.tool harness/examples/hello-app.manifest.json >/dev/null
+      - name: Python syntax and Harness test suite
         run: |
           set -euo pipefail
+          python3 -m compileall -q harness
           python3 harness/policy/validate_manifest.py harness/examples/hello-app.manifest.json
           python3 -m unittest discover -s harness/tests -v
+      - name: Validate diagnostic shell script syntax
+        run: bash -n scripts/security-audit.sh
       - name: Report source tree
-        run: |
-          echo "Tracked project files:"
-          git ls-files
+        run: git ls-files

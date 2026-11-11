@@ -19,25 +19,36 @@ Nexus OS 3000 is an experimental, Debian-based operating-system project focused 
 
 | Component | Responsibility |
 |---|---|
-| Nexus LUMEN | Desktop visual language and shell |
+| Nexus LUMEN | Native desktop shell and accessibility |
 | Living Space | Task-oriented workspaces |
 | Nexus Orbit | Window and workspace navigation |
 | Nexus Core | Local command and orchestration surface |
-| Nexus Harness | Execution policy and runtime coordination |
+| Nexus Harness | Application capability policy and runtime coordination |
 | Security Center | Permissions, isolation, firewall, verification, recovery |
 | Privacy Center | Data controls, network privacy, audit and export |
 | Nexus Pulse | Evidence-based system telemetry |
 
-## Repository layout
+## Implemented repository foundations
 
-- config/: Debian Live Build package lists.
-- .github/workflows/: CI, ISO build and quality checks.
-- docs/: architecture, threat model and project decisions.
-- harness/: capability manifest, deny-by-default policy and validator.
+- Debian Trixie amd64 live-build configuration and GitHub Actions workflows.
+- Staged sysctl security baseline with documented VM verification.
+- Harness v1 capability manifest, deny-by-default policy and metadata validator.
+- Static ZIP/TAR inspection that never extracts or executes imported content.
+- Read-only security posture diagnostic script.
+- Automated policy and archive-inspection tests in CI.
 
-## Nexus Harness policy foundation
+These are foundations, not a complete OS security stack. Archive inspection is not antivirus or proof that a file is safe. The Harness does not yet launch applications or enforce kernel isolation.
 
-The first Harness milestone includes a strict capability manifest, a deny-by-default policy, a metadata-only validator, and automated tests. It does not execute applications or enforce OS sandboxing yet. See docs/HARNESS_POLICY.md.
+## Documentation
+
+- Architecture: docs/ARCHITECTURE.md
+- Threat model: docs/THREAT_MODEL.md
+- Security baseline: docs/SECURITY_BASELINE.md
+- Harness policy: docs/HARNESS_POLICY.md
+- LUMEN UX specification: docs/NEXUS_LUMEN_UX.md
+- Privacy model: docs/PRIVACY_MODEL.md
+- Release gates: docs/RELEASE_GATES.md
+- Roadmap: docs/ROADMAP.md
 
 ## Build the first live ISO
 
@@ -47,17 +58,25 @@ The initial build targets **Debian 13 (trixie), amd64**.
 2. Select Build Nexus OS ISO.
 3. Choose Run workflow.
 4. Wait for the build to finish.
-5. Download the nexus-os-3000-iso artifact and boot it in a virtual machine.
+5. Download the nexus-os-3000-iso artifact and boot it in a disposable virtual machine.
 
 The first image is a development live environment, not a production release or a safe-to-install daily-driver OS.
 
+## Local checks
+
+    python3 harness/policy/validate_manifest.py harness/examples/hello-app.manifest.json
+    python3 -m unittest discover -s harness/tests -v
+    bash -n scripts/security-audit.sh
+
+The security audit script is read-only and reports observed state; it does not modify firewall, sysctl or service settings.
+
 ## Security baseline
 
-A conservative sysctl baseline is staged in the live image configuration. It is not yet runtime-verified; see docs/SECURITY_BASELINE.md for scope and VM verification steps. Package presence alone is not proof that a security control is active.
+A conservative sysctl baseline is staged in the live image configuration. It is not yet runtime-verified; see docs/SECURITY_BASELINE.md. Package presence alone is not proof that a security control is active.
 
-## Development status
+## Release readiness
 
-See docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/THREAT_MODEL.md, and docs/HARNESS_POLICY.md.
+See docs/RELEASE_GATES.md. A green CI run does not prove ISO bootability, sandbox enforcement, privacy guarantees or production readiness.
 
 ## License
 

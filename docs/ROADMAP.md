@@ -16,24 +16,27 @@ This roadmap separates working software from concepts and future research.
 - Establish signed release artifacts and reproducible build metadata.
 
 ## Phase 2 — Nexus LUMEN desktop
-- Define UX flows and accessibility requirements.
-- Build the first native desktop shell.
-- Implement Living Space, workspace switching and settings navigation.
-- Keep all security-critical decisions outside the presentation layer.
+- [x] Specify desktop surfaces, interaction invariants and accessibility requirements.
+- [ ] Build the first native desktop shell.
+- [ ] Implement Living Space, workspace switching and settings navigation.
+- [ ] Connect Pulse to real system telemetry.
 
 ## Phase 3 — Harness and application isolation
 - [x] Define a versioned capability manifest and deny-by-default policy contract.
 - [x] Add metadata-only manifest validation and CI unit tests.
+- [x] Add static ZIP/TAR metadata inspection without extraction or execution.
 - [ ] Integrate OS-enforced isolation and resource limits.
-- [ ] Inspect imported projects before execution.
-- [ ] Require explicit approval for network, device and privileged access.
+- [ ] Add explicit capability approval and revocation.
 - [ ] Add auditable permission grants, denials and revocation.
 
 ## Phase 4 — Security and privacy
-- Add package signature verification and update integrity checks.
-- Add firewall and per-application network policy interfaces.
-- Add permission history, quarantine workflow and recovery.
-- Add privacy controls with clear local/network data-flow explanations.
+- [x] Document privacy defaults, data classes and honest limitations.
+- [x] Add a read-only security posture diagnostic.
+- [ ] Verify sysctl baseline in the live VM.
+- [ ] Confirm AppArmor is enabled and profiles are loaded.
+- [ ] Design a user-visible nftables policy with safe recovery.
+- [ ] Add package signature verification and update integrity checks.
+- [ ] Add permission history, quarantine workflow and recovery.
 
 ## Phase 5 — System intelligence
 - Add evidence-based telemetry.
