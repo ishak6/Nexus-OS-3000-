@@ -27,7 +27,8 @@ jobs:
           test -s scripts/security-audit.sh
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
-          test -s lumen/qml/Main.qml\n          test -s pulse/telemetry.py
+          test -s lumen/qml/Main.qml
+          test -s pulse/telemetry.py
           test -s docs/LUMEN_IMPLEMENTATION.md
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
