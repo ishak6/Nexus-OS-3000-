@@ -36,18 +36,17 @@ jobs:
         run: |
           mkdir -p config/archives
           cat > config/archives/nexus-security.list.chroot <<'EOF'
-          deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
           EOF
           cat > config/archives/nexus-security.list.binary <<'EOF'
-          deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
           EOF
           sudo lb config \
             --mode debian \
             --distribution trixie \
             --initramfs live-boot \
             --architectures amd64 \
-            --linux-packages linux-image \
-            --linux-flavours amd64 \
+            --linux-packages none \
             --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
             --bootloader grub-efi \
