@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check commit whitespace
-        run: git diff --check HEAD^ HEAD
+        run: git show --check --oneline HEAD
       - name: Validate repository structure and policy JSON
         run: |
           set -euo pipefail
