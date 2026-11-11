@@ -30,30 +30,34 @@ Nexus OS 3000 is an experimental, Debian-based operating-system project focused 
 
 ## Repository layout
 
-- `config/`: Debian Live Build package lists.
-- `.github/workflows/`: CI, ISO build and quality checks.
-- `docs/`: architecture, threat model and project decisions.
-- `desktop/`, `harness/`, `security/`, `system/`, `apps/`, `ai/`: planned implementation areas.
+- config/: Debian Live Build package lists.
+- .github/workflows/: CI, ISO build and quality checks.
+- docs/: architecture, threat model and project decisions.
+- harness/: capability manifest, deny-by-default policy and validator.
+
+## Nexus Harness policy foundation
+
+The first Harness milestone includes a strict capability manifest, a deny-by-default policy, a metadata-only validator, and automated tests. It does not execute applications or enforce OS sandboxing yet. See docs/HARNESS_POLICY.md.
 
 ## Build the first live ISO
 
 The initial build targets **Debian 13 (trixie), amd64**.
 
-1. Open the repository's **Actions** tab.
-2. Select **Build Nexus OS ISO**.
-3. Choose **Run workflow**.
+1. Open the repository's Actions tab.
+2. Select Build Nexus OS ISO.
+3. Choose Run workflow.
 4. Wait for the build to finish.
-5. Download the `nexus-os-3000-iso` artifact and boot it in a virtual machine.
+5. Download the nexus-os-3000-iso artifact and boot it in a virtual machine.
 
 The first image is a development live environment, not a production release or a safe-to-install daily-driver OS.
 
 ## Security baseline
 
-A conservative sysctl baseline is staged in the live image configuration. It is not yet runtime-verified; see [docs/SECURITY_BASELINE.md](docs/SECURITY_BASELINE.md) for scope and VM verification steps. Package presence alone is not proof that a security control is active.
+A conservative sysctl baseline is staged in the live image configuration. It is not yet runtime-verified; see docs/SECURITY_BASELINE.md for scope and VM verification steps. Package presence alone is not proof that a security control is active.
 
 ## Development status
 
-See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+See docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/THREAT_MODEL.md, and docs/HARNESS_POLICY.md.
 
 ## License
 

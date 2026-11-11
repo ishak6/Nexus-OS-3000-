@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "sample-hello",
+  "name": "Sample Hello App",
+  "version": "1.0.0",
+  "capabilities": [],
+  "execution": {
+    "auto_execute": false,
+    "sandbox_required": true,
+    "privileged": false
+  }
+}

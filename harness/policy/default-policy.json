@@ -1,0 +1,13 @@
+{
+  "policy_version": 1,
+  "default_decision": "deny",
+  "auto_execute_imports": false,
+  "sandbox_required": true,
+  "privileged_execution_allowed": false,
+  "capabilities_granted_by_default": [],
+  "notes": [
+    "A manifest is a request, not a permission grant.",
+    "Every requested capability requires a separate user-visible decision.",
+    "This policy package validates metadata only; it does not launch processes or enforce kernel isolation."
+  ]
+}

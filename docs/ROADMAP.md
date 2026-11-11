@@ -22,10 +22,12 @@ This roadmap separates working software from concepts and future research.
 - Keep all security-critical decisions outside the presentation layer.
 
 ## Phase 3 — Harness and application isolation
-- Define a threat model and permission/capability schema.
-- Integrate OS-enforced isolation and resource limits.
-- Inspect imported projects before execution.
-- Require explicit approval for network, device and privileged access.
+- [x] Define a versioned capability manifest and deny-by-default policy contract.
+- [x] Add metadata-only manifest validation and CI unit tests.
+- [ ] Integrate OS-enforced isolation and resource limits.
+- [ ] Inspect imported projects before execution.
+- [ ] Require explicit approval for network, device and privileged access.
+- [ ] Add auditable permission grants, denials and revocation.
 
 ## Phase 4 — Security and privacy
 - Add package signature verification and update integrity checks.
