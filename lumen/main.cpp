@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QCoreApplication>
