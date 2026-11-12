@@ -9,6 +9,7 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup()
 
 qt_add_executable(nexus-lumen main.cpp)
+target_link_libraries(nexus-lumen PRIVATE Qt6::Quick)
 qt_add_resources(nexus-lumen "lumen_qml"
     PREFIX "/"
     FILES qml/Main.qml
