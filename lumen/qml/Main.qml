@@ -78,7 +78,7 @@ ApplicationWindow {
                     }
                     ColumnLayout { spacing: 1
                         Label { text: "NEXUS"; color: root.foreground; font.bold: true; font.pixelSize: 16 }
-                        Label { text: "LUMEN  ·  PREVIEW"; color: root.muted; font.pixelSize: 9; letterSpacing: 1.2 }
+                        Label { text: "LUMEN  ·  PREVIEW"; color: root.muted; font.pixelSize: 9; font.letterSpacing: 1.2 }
                     }
                 }
                 Label { text: "WORKSPACE"; color: root.muted; font.pixelSize: 10; font.bold: true; Layout.topMargin: 16 }
@@ -103,7 +103,7 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 ColumnLayout { spacing: 3
-                    Label { text: "NEXUS OS 3000"; color: root.muted; font.pixelSize: 11; letterSpacing: 1.4 }
+                    Label { text: "NEXUS OS 3000"; color: root.muted; font.pixelSize: 11; font.letterSpacing: 1.4 }
                     Label { text: root.activePage; color: root.foreground; font.pixelSize: 28; font.bold: true }
                 }
                 Item { Layout.fillWidth: true }
@@ -138,7 +138,7 @@ ApplicationWindow {
                             Label { text: root.activePage === "Overview" ? "A calmer space for focused work." : root.activePage; color: root.foreground; font.pixelSize: 23; font.bold: true }
                             Label { text: root.activePage === "Overview" ? "Your workspace, system controls and privacy tools in one place." : "LUMEN preview surface. System integration is not connected yet."; color: root.muted; font.pixelSize: 13; wrapMode: Text.Wrap }
                             Item { Layout.fillHeight: true }
-                            Label { text: "NEXUS LUMEN  /  EARLY PREVIEW"; color: root.accent; font.pixelSize: 10; font.bold: true; letterSpacing: 1.2 }
+                            Label { text: "NEXUS LUMEN  /  EARLY PREVIEW"; color: root.accent; font.pixelSize: 10; font.bold: true; font.letterSpacing: 1.2 }
                         }
                     }
                     GridLayout {
