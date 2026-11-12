@@ -37,6 +37,17 @@ jobs:
           grep -q 'Pin-Priority: 1001' .github/workflows/build-os.yml
           grep -q -- '--bootloaders "grub-pc grub-efi"' .github/workflows/build-os.yml
           grep -q "report_el_torito plain" .github/workflows/build-os.yml
+          python3 - <<'PY'
+          from pathlib import Path
+
+          workflow = Path(".github/workflows/build-os.yml")
+          for number, line in enumerate(workflow.read_text().splitlines(), 1):
+              trailing = len(line) - len(line.rstrip("\\"))
+              if trailing > 1:
+                  raise SystemExit(
+                      f"{workflow}:{number}: doubled trailing backslash breaks shell continuation"
+                  )
+          PY
           python3 -m json.tool harness/policy/manifest.schema.json >/dev/null
           python3 -m json.tool harness/policy/default-policy.json >/dev/null
           python3 -m json.tool harness/examples/hello-app.manifest.json >/dev/null
@@ -51,8 +62,8 @@ jobs:
         run: bash -n scripts/security-audit.sh
       - name: Install Qt 6 build and QML runtime dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends cmake ninja-build qt6-base-dev qt6-declarative-dev qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-window
+          sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends cmake ninja-build qt6-base-dev qt6-declarative-dev qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-window
       - name: Build LUMEN prototype
         run: |
           set -euo pipefail
