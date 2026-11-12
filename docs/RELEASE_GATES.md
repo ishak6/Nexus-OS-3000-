@@ -5,7 +5,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 | Gate | Required evidence | Current state |
 |---|---|---|
 | Repository quality | CI checks and unit tests pass | Implemented; CI evidence per commit |
-| ISO build | Non-empty ISO and SHA-256 artifact | Pending |
+| ISO build | Non-empty ISO and SHA-256 artifact | Built in Actions run #24; BIOS/UEFI El Torito entries and SHA-256 verification passed; artifact uploaded (VM boot still pending) |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false` |
 | VM boot | Boot log and screenshot; no installer/destructive disk action | Not tested |
 | Hardware basics | Display, keyboard, storage, network, audio | Not tested |
