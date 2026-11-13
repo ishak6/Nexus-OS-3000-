@@ -25,12 +25,14 @@ jobs:
           test -s harness/policy/default-policy.json
           test -s harness/inspection/inspect_archive.py
           test -s scripts/security-audit.sh
+          test -s scripts/vm-smoke-test.sh
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
           test -s lumen/qml/Main.qml
           test -s pulse/telemetry.py
           test -s docs/LUMEN_IMPLEMENTATION.md
           grep -q "name: Build Nexus OS ISO" .github/workflows/build-os.yml
+          grep -q "name: Boot live ISO in isolated QEMU VM" .github/workflows/build-os.yml
           grep -q "distribution trixie" .github/workflows/build-os.yml
           grep -q -- 'live-build=1:20250505+deb13u1' .github/workflows/build-os.yml
           grep -q 'Pin-Priority: 50' .github/workflows/build-os.yml
@@ -58,8 +60,11 @@ jobs:
           python3 harness/policy/validate_manifest.py harness/examples/hello-app.manifest.json
           python3 -m unittest discover -s harness/tests -v
           python3 -m unittest discover -s pulse/tests -v
-      - name: Validate diagnostic shell script syntax
-        run: bash -n scripts/security-audit.sh
+      - name: Validate diagnostic and VM test shell syntax
+        run: |
+          set -euo pipefail
+          bash -n scripts/security-audit.sh
+          bash -n scripts/vm-smoke-test.sh
       - name: Install Qt 6 build and QML runtime dependencies
         run: |
           sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
