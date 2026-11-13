@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "config/**"
+      - "scripts/vm-smoke-test.sh"
       - ".github/workflows/build-os.yml"
 
 permissions:
@@ -148,3 +149,43 @@ jobs:
             config/
           if-no-files-found: ignore
           retention-days: 7
+
+  vm-boot-smoke:
+    name: Boot live ISO in isolated QEMU VM
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Download ISO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: dist
+
+      - name: Install QEMU and OCR tools
+        run: |
+          set -euo pipefail
+          sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends qemu-system-x86 tesseract-ocr
+
+      - name: Boot ISO and capture desktop evidence
+        run: |
+          set -euo pipefail
+          image="$(find dist -maxdepth 1 -type f -name '*.iso' -print -quit)"
+          if [ -z "$image" ]; then
+            echo "Downloaded artifact does not contain an ISO." >&2
+            exit 1
+          fi
+          bash scripts/vm-smoke-test.sh "$image" vm-smoke-evidence
+
+      - name: Upload VM boot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-vm-smoke-evidence
+          path: vm-smoke-evidence/
+          if-no-files-found: warn
+          retention-days: 14
