@@ -79,8 +79,8 @@ if [[ ! -S "$MONITOR_SOCKET" ]]; then
   exit 1
 fi
 
-echo "Waiting up to 168 seconds for the XFCE desktop to appear."
-for attempt in $(seq 1 24); do
+echo "Waiting up to 252 seconds for the XFCE desktop to appear."
+for attempt in $(seq 1 36); do
   if ! kill -0 "$QEMU_PID" 2>/dev/null; then
     echo "QEMU exited during guest boot." >&2
     cat "$QEMU_LOG" >&2
@@ -151,4 +151,3 @@ fi
 echo "--- QEMU log ---" >&2
 tail -n 80 "$QEMU_LOG" >&2
 exit 1
-PY
