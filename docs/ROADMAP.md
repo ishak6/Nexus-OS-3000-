@@ -6,8 +6,9 @@ This roadmap separates working software from concepts and future research.
 - [x] Define project principles and initial repository layout.
 - [x] Add Debian Live Build package configuration.
 - [x] Add GitHub Actions ISO and quality workflows.
-- [ ] Run the first successful ISO build.
-- [ ] Boot-test the ISO in a virtual machine and record results.
+- [x] Run the first successful ISO build (GitHub Actions Build Nexus OS ISO #24).
+- [x] Add an isolated QEMU BIOS boot smoke-test job with screenshot/OCR evidence upload.
+- [ ] Pass the QEMU VM desktop boot test and record the evidence.
 
 ## Phase 1 — Minimal bootable system
 - Confirm boot on supported amd64 virtual machines.
