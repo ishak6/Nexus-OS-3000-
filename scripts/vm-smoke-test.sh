@@ -79,6 +79,40 @@ if [[ ! -S "$MONITOR_SOCKET" ]]; then
   exit 1
 fi
 
+# Debian's live GRUB menu can remain interactive in headless QEMU.
+# Give firmware/GRUB time to render, then press Enter on the default live entry.
+echo "Selecting the default Debian live entry from the GRUB menu."
+sleep 8
+python3 - "$MONITOR_SOCKET" <<'PY'
+import socket
+import sys
+import time
+
+monitor_path = sys.argv[1]
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+sock.settimeout(5)
+sock.connect(monitor_path)
+
+def read_prompt():
+    data = bytearray()
+    deadline = time.monotonic() + 5
+    while b"(qemu)" not in data and time.monotonic() < deadline:
+        try:
+            chunk = sock.recv(4096)
+        except socket.timeout:
+            break
+        if not chunk:
+            break
+        data.extend(chunk)
+    return bytes(data)
+
+read_prompt()
+sock.sendall(b"sendkey ret\\n")
+read_prompt()
+sock.close()
+PY
+sleep 5
+
 echo "Waiting up to 252 seconds for the XFCE desktop to appear."
 for attempt in $(seq 1 36); do
   if ! kill -0 "$QEMU_PID" 2>/dev/null; then
