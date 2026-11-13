@@ -107,7 +107,7 @@ def read_prompt():
     return bytes(data)
 
 read_prompt()
-sock.sendall(b"sendkey ret\\n")
+sock.sendall(b"sendkey ret\n")
 read_prompt()
 sock.close()
 PY
