@@ -39,6 +39,12 @@ jobs:
           grep -q 'Pin-Priority: 1001' .github/workflows/build-os.yml
           grep -q -- '--bootloaders "grub-pc grub-efi"' .github/workflows/build-os.yml
           grep -q "report_el_torito plain" .github/workflows/build-os.yml
+          grep -q "config/bootloaders/isolinux/isolinux.cfg" .github/workflows/build-os.yml
+          grep -q "timeout 50" .github/workflows/build-os.yml
+          if grep -q "sendkey ret" scripts/vm-smoke-test.sh; then
+            echo "VM smoke test must rely on the finite ISOLINUX timeout, not fragile key injection." >&2
+            exit 1
+          fi
           python3 - <<'PY'
           from pathlib import Path
 
