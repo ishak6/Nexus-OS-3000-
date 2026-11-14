@@ -7,7 +7,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 | Repository quality | CI checks and unit tests pass | Implemented; CI evidence per commit |
 | ISO build | Non-empty ISO and SHA-256 artifact | Built in Actions run #24; BIOS/UEFI El Torito entries and SHA-256 verification passed; artifact uploaded (VM boot still pending) |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false` |
-| VM boot | Boot log and screenshot; no installer/destructive disk action | Not tested |
+| VM boot | Boot log and screenshot; no installer/destructive disk action | QEMU BIOS test reached the ISOLINUX menu but did not continue because its default timeout was 0; a five-second ISOLINUX timeout is now configured in Build #32, verification pending |
 | Hardware basics | Display, keyboard, storage, network, audio | Not tested |
 | Security baseline | Runtime sysctl values and service status | Staged; not verified |
 | Security Center | Enforced controls, permission UI and firewall policy | No integrated Security Center; the current audit script is read-only diagnostics |
