@@ -72,6 +72,251 @@ jobs:
 
       - name: Configure Debian Trixie Live
         run: |
+          # Debian live-build defaults ISOLINUX to timeout 0 (wait forever).
+          # Copy the packaged theme and enable a five-second default live boot.
+          mkdir -p config/bootloaders
+          cp -a /usr/share/live/build/bootloaders/isolinux config/bootloaders/
+          isolinux_cfg="config/bootloaders/isolinux/isolinux.cfg"
+          test -s "$isolinux_cfg"
+          if grep -Eq '^[[:space:]]*timeout[[:space:]]+[0-9]+[[:space:]]*          cat > config/archives/nexus-security.list.chroot <<'EOF'
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
+          cat > config/archives/nexus-security.list.binary <<'EOF'
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
+          sudo lb config \
+            --mode debian \
+            --distribution trixie \
+            --initramfs live-boot \
+            --initsystem systemd \
+            --architectures amd64 \
+            --linux-packages none \
+            --binary-images iso-hybrid \
+            --archive-areas "main contrib non-free non-free-firmware" \
+            --bootloaders "grub-pc grub-efi" \
+            --debian-installer false \
+            --apt-recommends false \
+            --apt-secure true \
+            --security false \
+            --mirror-bootstrap http://deb.debian.org/debian \
+            --mirror-chroot http://deb.debian.org/debian \
+            --mirror-binary http://deb.debian.org/debian \
+            --memtest none
+
+      - name: Build ISO
+        run: |
+          set -euo pipefail
+          sudo lb build 2>&1 | tee build.log
+
+      - name: Verify ISO boot entries and generate checksum
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          images=( *.iso )
+          if [ "${#images[@]}" -eq 0 ]; then
+            echo "No ISO image was produced." >&2
+            exit 1
+          fi
+          for image in "${images[@]}"; do
+            test -s "$image"
+            report="$(xorriso -indev "$image" -report_el_torito plain -report_system_area plain 2>&1)"
+            printf '%s\n' "$report"
+            if ! grep -Eqi 'BIOS' <<<"$report"; then
+              echo "ISO is missing a legacy BIOS El Torito boot entry." >&2
+              exit 1
+            fi
+            if ! grep -Eqi 'UEFI' <<<"$report"; then
+              echo "ISO is missing a UEFI El Torito boot entry." >&2
+              exit 1
+            fi
+            sha256sum "$image" | tee "$image.sha256"
+          done
+          sudo chown -R "$USER":"$USER" .
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: |
+            *.iso
+            *.iso.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-build-logs
+          path: |
+            build.log
+            *.log
+            config/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  vm-boot-smoke:
+    name: Boot live ISO in isolated QEMU VM
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Download ISO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: dist
+
+      - name: Install QEMU and OCR tools
+        run: |
+          set -euo pipefail
+          sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends qemu-system-x86 tesseract-ocr
+
+      - name: Boot ISO and capture desktop evidence
+        run: |
+          set -euo pipefail
+          image="$(find dist -maxdepth 1 -type f -name '*.iso' -print -quit)"
+          if [ -z "$image" ]; then
+            echo "Downloaded artifact does not contain an ISO." >&2
+            exit 1
+          fi
+          bash scripts/vm-smoke-test.sh "$image" vm-smoke-evidence
+
+      - name: Upload VM boot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-vm-smoke-evidence
+          path: vm-smoke-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+ "$isolinux_cfg"; then
+            sed -i -E 's/^[[:space:]]*timeout[[:space:]]+[0-9]+[[:space:]]*$/timeout 50/' "$isolinux_cfg"
+          else
+            printf '\\ntimeout 50\\n' >> "$isolinux_cfg"
+          fi
+          grep -Eq '^timeout[[:space:]]+50          cat > config/archives/nexus-security.list.chroot <<'EOF'
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
+          cat > config/archives/nexus-security.list.binary <<'EOF'
+          deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+          EOF
+          sudo lb config \
+            --mode debian \
+            --distribution trixie \
+            --initramfs live-boot \
+            --initsystem systemd \
+            --architectures amd64 \
+            --linux-packages none \
+            --binary-images iso-hybrid \
+            --archive-areas "main contrib non-free non-free-firmware" \
+            --bootloaders "grub-pc grub-efi" \
+            --debian-installer false \
+            --apt-recommends false \
+            --apt-secure true \
+            --security false \
+            --mirror-bootstrap http://deb.debian.org/debian \
+            --mirror-chroot http://deb.debian.org/debian \
+            --mirror-binary http://deb.debian.org/debian \
+            --memtest none
+
+      - name: Build ISO
+        run: |
+          set -euo pipefail
+          sudo lb build 2>&1 | tee build.log
+
+      - name: Verify ISO boot entries and generate checksum
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          images=( *.iso )
+          if [ "${#images[@]}" -eq 0 ]; then
+            echo "No ISO image was produced." >&2
+            exit 1
+          fi
+          for image in "${images[@]}"; do
+            test -s "$image"
+            report="$(xorriso -indev "$image" -report_el_torito plain -report_system_area plain 2>&1)"
+            printf '%s\n' "$report"
+            if ! grep -Eqi 'BIOS' <<<"$report"; then
+              echo "ISO is missing a legacy BIOS El Torito boot entry." >&2
+              exit 1
+            fi
+            if ! grep -Eqi 'UEFI' <<<"$report"; then
+              echo "ISO is missing a UEFI El Torito boot entry." >&2
+              exit 1
+            fi
+            sha256sum "$image" | tee "$image.sha256"
+          done
+          sudo chown -R "$USER":"$USER" .
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: |
+            *.iso
+            *.iso.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-build-logs
+          path: |
+            build.log
+            *.log
+            config/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  vm-boot-smoke:
+    name: Boot live ISO in isolated QEMU VM
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Download ISO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nexus-os-3000-iso
+          path: dist
+
+      - name: Install QEMU and OCR tools
+        run: |
+          set -euo pipefail
+          sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends qemu-system-x86 tesseract-ocr
+
+      - name: Boot ISO and capture desktop evidence
+        run: |
+          set -euo pipefail
+          image="$(find dist -maxdepth 1 -type f -name '*.iso' -print -quit)"
+          if [ -z "$image" ]; then
+            echo "Downloaded artifact does not contain an ISO." >&2
+            exit 1
+          fi
+          bash scripts/vm-smoke-test.sh "$image" vm-smoke-evidence
+
+      - name: Upload VM boot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-vm-smoke-evidence
+          path: vm-smoke-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+ "$isolinux_cfg"
+          echo "Configured ISOLINUX to boot the default live entry after five seconds."
           mkdir -p config/archives
           cat > config/archives/nexus-security.list.chroot <<'EOF'
           deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
