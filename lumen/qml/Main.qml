@@ -146,9 +146,9 @@ ApplicationWindow {
                         columns: width > 1050 ? 3 : 2
                         columnSpacing: 14
                         rowSpacing: 14
-                        InfoCard { heading: "CPU LOAD"; value: "—"; detail: "Telemetry service not connected" }
-                        InfoCard { heading: "MEMORY"; value: "—"; detail: "Telemetry service not connected" }
-                        InfoCard { heading: "NETWORK"; value: "—"; detail: "Network monitor not connected" }
+                        InfoCard { heading: "CPU LOAD"; value: pulseMonitor.cpuUsage; detail: pulseMonitor.status }
+                        InfoCard { heading: "MEMORY"; value: pulseMonitor.memoryUsage; detail: "Used physical memory" }
+                        InfoCard { heading: "NETWORK"; value: pulseMonitor.networkUsage; detail: "Combined RX + TX since previous sample" }
                     }
                     Rectangle {
                         Layout.fillWidth: true
