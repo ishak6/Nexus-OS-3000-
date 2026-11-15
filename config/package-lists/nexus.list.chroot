@@ -19,6 +19,13 @@ network-manager
 iproute2
 iputils-ping
 openssh-client
+# Nexus LUMEN Qt Quick runtime
+qml6-module-qtquick
+qml6-module-qtquick-controls
+qml6-module-qtquick-layouts
+qml6-module-qtquick-window
+qml6-module-qtqml-workerscript
+qml6-module-qtquick-templates
 # Desktop foundation
 task-xfce-desktop
 lightdm
