@@ -28,6 +28,7 @@ jobs:
           test -s scripts/vm-smoke-test.sh
           test -s scripts/configure-live-bootloader.sh
           test -s scripts/tests/test-grub-boot-config.sh
+          test -s scripts/tests/test-vm-smoke-test.sh
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
           test -s lumen/qml/Main.qml
@@ -81,7 +82,9 @@ jobs:
           bash -n scripts/vm-smoke-test.sh
           bash -n scripts/configure-live-bootloader.sh
           bash -n scripts/tests/test-grub-boot-config.sh
+          bash -n scripts/tests/test-vm-smoke-test.sh
           bash scripts/tests/test-grub-boot-config.sh
+          bash scripts/tests/test-vm-smoke-test.sh
       - name: Install Qt 6 build and QML runtime dependencies
         run: |
           sudo apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
