@@ -31,6 +31,8 @@ jobs:
           test -s scripts/tests/test-vm-smoke-test.sh
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
+          test -s lumen/PulseMonitor.cpp
+          test -s lumen/PulseMonitor.h
           test -s lumen/qml/Main.qml
           test -s pulse/telemetry.py
           test -s pulse/system_info.py
