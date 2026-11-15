@@ -50,7 +50,7 @@ void PulseMonitor::start()
     const QString script = QFileInfo::exists(installedScript)
         ? installedScript : QDir::cleanPath(developmentScript);
 
-    if (!QFileInfo::isFile(script)) {
+    if (!QFileInfo(script).isFile()) {
         setStatus(QStringLiteral("Telemetry service unavailable"));
         return;
     }
