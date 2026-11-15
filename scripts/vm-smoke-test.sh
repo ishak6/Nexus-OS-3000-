@@ -117,7 +117,7 @@ def read_prompt():
     return bytes(data)
 
 read_prompt()
-sock.sendall(f"screendump {screenshot_path}\\n".encode())
+sock.sendall(f"screendump {screenshot_path}\n".encode())
 response = read_prompt()
 sock.close()
 
