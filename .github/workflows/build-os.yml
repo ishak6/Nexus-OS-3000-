@@ -8,6 +8,8 @@ on:
       - "config/**"
       - "scripts/vm-smoke-test.sh"
       - "scripts/configure-live-bootloader.sh"
+      - "lumen/**"
+      - "pulse/**"
       - ".github/workflows/build-os.yml"
 
 permissions:
@@ -51,7 +53,11 @@ jobs:
               debootstrap squashfs-tools xorriso \
               grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
               isolinux syslinux-common syslinux-utils ca-certificates \
-              debian-archive-keyring
+              debian-archive-keyring \
+              cmake ninja-build qt6-base-dev qt6-declarative-dev \
+              qml6-module-qtquick qml6-module-qtquick-controls \
+              qml6-module-qtquick-layouts qml6-module-qtquick-window \
+              qml6-module-qtqml-workerscript qml6-module-qtquick-templates
           }
           installed=0
           for attempt in 1 2 3; do
@@ -103,6 +109,16 @@ jobs:
             --mirror-chroot http://deb.debian.org/debian \
             --mirror-binary http://deb.debian.org/debian \
             --memtest none
+
+      - name: Build and stage Nexus LUMEN application
+        run: |
+          set -euo pipefail
+          cmake -S lumen -B build/lumen -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/lumen --parallel 2
+          DESTDIR="$PWD/config/includes.chroot" cmake --install build/lumen --prefix /usr
+          test -x config/includes.chroot/usr/bin/nexus-lumen
+          test -s config/includes.chroot/usr/lib/nexus/pulse/telemetry.py
+          test -s config/includes.chroot/usr/share/applications/nexus-lumen.desktop
 
       - name: Build ISO
         run: |
