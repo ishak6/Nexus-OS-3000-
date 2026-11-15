@@ -91,6 +91,7 @@ jobs:
           bash -n scripts/configure-live-bootloader.sh
           bash -n scripts/tests/test-grub-boot-config.sh
           bash -n scripts/tests/test-vm-smoke-test.sh
+          python3 scripts/tests/test_security_baseline.py
           bash scripts/tests/test-grub-boot-config.sh
           bash scripts/tests/test-vm-smoke-test.sh
       - name: Install Qt 6 build and QML runtime dependencies
