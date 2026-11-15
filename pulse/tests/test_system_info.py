@@ -1,9 +1,15 @@
+import importlib.util
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
-from system_info import SystemInfo
+ROOT = Path(__file__).resolve().parents[1]
+SPEC = importlib.util.spec_from_file_location("pulse_system_info", ROOT / "system_info.py")
+MODULE = importlib.util.module_from_spec(SPEC)
+assert SPEC and SPEC.loader
+SPEC.loader.exec_module(MODULE)
+SystemInfo = MODULE.SystemInfo
 
 
 class SystemInfoTests(unittest.TestCase):
