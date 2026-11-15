@@ -7,6 +7,7 @@ on:
     paths:
       - "config/**"
       - "scripts/vm-smoke-test.sh"
+      - "scripts/configure-live-bootloader.sh"
       - ".github/workflows/build-os.yml"
 
 permissions:
@@ -72,16 +73,11 @@ jobs:
 
       - name: Configure Debian Trixie Live
         run: |
-          # Debian live-build's ISOLINUX theme waits forever when timeout is zero.
-          # Copy the stock theme and boot its default live entry after five seconds.
-          mkdir -p config/bootloaders
-          cp -a /usr/share/live/build/bootloaders/isolinux config/bootloaders/
-          isolinux_cfg="config/bootloaders/isolinux/isolinux.cfg"
-          test -s "$isolinux_cfg"
-          grep -q '^timeout 0' "$isolinux_cfg"
-          sed -i 's/^timeout 0/timeout 50/' "$isolinux_cfg"
-          grep -q '^timeout 50' "$isolinux_cfg"
-          echo "Configured ISOLINUX five-second default boot timeout."
+          # This image selects GRUB for BIOS and UEFI; ISOLINUX settings do not
+          # control the boot menu shown by this image.
+          bash scripts/configure-live-bootloader.sh \
+            /usr/share/live/build/bootloaders/grub-pc \
+            config/bootloaders/grub-pc
           mkdir -p config/archives
           cat > config/archives/nexus-security.list.chroot <<'EOF'
           deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
@@ -112,6 +108,14 @@ jobs:
         run: |
           set -euo pipefail
           sudo lb build 2>&1 | tee build.log
+
+      - name: Verify generated GRUB timeout
+        run: |
+          set -euo pipefail
+          grub_config="binary/boot/grub/config.cfg"
+          test -s "$grub_config"
+          grep -Fx 'set timeout_style=menu' "$grub_config"
+          grep -Fx 'set timeout=5' "$grub_config"
 
       - name: Verify ISO boot entries and generate checksum
         run: |
