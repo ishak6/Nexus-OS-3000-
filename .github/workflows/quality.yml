@@ -44,6 +44,11 @@ jobs:
           grep -q "scripts/configure-live-bootloader.sh" .github/workflows/build-os.yml
           grep -q "binary/boot/grub/config.cfg" .github/workflows/build-os.yml
           grep -q "set timeout=5" scripts/configure-live-bootloader.sh
+          grep -q "ISO selects GRUB" scripts/vm-smoke-test.sh
+          if grep -q "ISOLINUX menu" scripts/vm-smoke-test.sh; then
+            echo "VM smoke-test documentation must match the configured GRUB bootloader." >&2
+            exit 1
+          fi
           if grep -q "sendkey ret" scripts/vm-smoke-test.sh; then
             echo "VM smoke test must rely on the configured GRUB timeout, not fragile key injection." >&2
             exit 1
