@@ -79,8 +79,8 @@ if [[ ! -S "$MONITOR_SOCKET" ]]; then
   exit 1
 fi
 
-# The ISO's ISOLINUX menu has a five-second default-entry timeout.
-# Allow that countdown to finish before collecting desktop screenshots.
+# The ISO selects GRUB for BIOS and UEFI. Let its configured five-second
+# default-entry timeout finish before collecting desktop screenshots.
 echo "Allowing the default live entry to boot automatically."
 sleep 8
 
@@ -117,7 +117,7 @@ def read_prompt():
     return bytes(data)
 
 read_prompt()
-sock.sendall(f"screendump {screenshot_path}\n".encode())
+sock.sendall(f"screendump {screenshot_path}\\n".encode())
 response = read_prompt()
 sock.close()
 
