@@ -35,6 +35,7 @@ Nexus OS 3000 is an experimental, Debian-based operating-system project focused 
 - Harness v1 capability manifest, deny-by-default policy and metadata validator.
 - Static ZIP/TAR inspection that never extracts or executes imported content.
 - Read-only security posture diagnostic script.
+- Read-only Nexus Core system inventory API for OS identity, kernel/architecture, hostname, CPU model, memory and uptime; it reads local metadata only and does not transmit telemetry.
 - Automated policy and archive-inspection tests in CI.
 
 These are foundations, not a complete OS security stack. Archive inspection is not antivirus or proof that a file is safe. The Harness does not yet launch applications or enforce kernel isolation.
@@ -68,6 +69,8 @@ The first image is a development live environment, not a production release or a
 
     python3 harness/policy/validate_manifest.py harness/examples/hello-app.manifest.json
     python3 -m unittest discover -s harness/tests -v
+    python3 -m unittest discover -s pulse/tests -v
+    python3 pulse/system_info.py
     bash -n scripts/security-audit.sh
 
 The security audit script is read-only and reports observed state; it does not modify firewall, sysctl or service settings.
