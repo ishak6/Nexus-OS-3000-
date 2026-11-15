@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Nexus LUMEN
+Comment=Open the experimental Nexus OS workspace
+Exec=nexus-lumen
+Icon=preferences-desktop
+Terminal=false
+Categories=Utility;System;
+StartupNotify=true
