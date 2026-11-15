@@ -33,6 +33,9 @@ jobs:
           test -s lumen/main.cpp
           test -s lumen/PulseMonitor.cpp
           test -s lumen/PulseMonitor.h
+          test -s config/includes.chroot/usr/share/applications/nexus-lumen.desktop
+          grep -q 'cmake --install build/lumen --prefix /usr' .github/workflows/build-os.yml
+          grep -q 'lumen/\*\*' .github/workflows/build-os.yml
           test -s lumen/qml/Main.qml
           test -s pulse/telemetry.py
           test -s pulse/system_info.py
