@@ -2,7 +2,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QCoreApplication>
+#include <QQmlContext>
 #include <QUrl>
+
+#include "PulseMonitor.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +13,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(QStringLiteral("Nexus LUMEN"));
     QCoreApplication::setOrganizationName(QStringLiteral("Nexus OS"));
 
+    PulseMonitor pulseMonitor;
+    pulseMonitor.start();
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("pulseMonitor"), &pulseMonitor);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
