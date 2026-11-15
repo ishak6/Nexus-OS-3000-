@@ -73,7 +73,7 @@ check_sysctl kernel.unprivileged_bpf_disabled 1
 check_sysctl fs.suid_dumpable 0
 check_sysctl fs.protected_hardlinks 1
 check_sysctl fs.protected_symlinks 1
-check_sysctl fs.protected_fifos 1
+check_sysctl fs.protected_fifos 2
 check_sysctl fs.protected_regular 2
 check_sysctl net.ipv4.conf.all.accept_redirects 0
 check_sysctl net.ipv6.conf.all.accept_redirects 0
