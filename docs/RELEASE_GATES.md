@@ -4,8 +4,8 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 
 | Gate | Required evidence | Current state |
 |---|---|---|
-| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on current `main` HEAD `1d337c589548cb37dfa6e5dbb0e5e12957b966e9` via Quality Checks #105. |
-| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS for Build #39's build job only**, on older commit `f9b8986612f68c0335563a42d9bf6576d4233800`. The ISO and checksum were uploaded. Current HEAD has no ISO build evidence yet. |
+| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on evidence baseline `fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3` via Quality Checks #106. |
+| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS for Build #39's build job only**, on older commit `f9b8986612f68c0335563a42d9bf6576d4233800`. The ISO and checksum were uploaded. The evidence baseline has no ISO build yet. |
 | VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **FAIL** in Build #39. QEMU remained at the GRUB menu; the XFCE desktop marker was not detected. |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false`. |
 | Hardware basics | Display, keyboard, storage, network, audio and shutdown/reboot | Not tested on a declared hardware/VM matrix. |
@@ -16,7 +16,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 | Harness policy | Manifest validator and archive inspection tests | Static policy and archive-inspection tests pass. This is not runtime sandbox enforcement. |
 | Sandbox runtime | Boundary tests, resource limits, revocation and escape-resistance evidence | Not implemented/verified. |
 | Privacy controls | Data-flow inventory, permission enforcement and opt-in/revocation tests | Specification exists; runtime permission enforcement is not implemented. |
-| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt/QML prototype build and offscreen startup pass in Quality #105. It is not a complete shell or integrated desktop session; XFCE remains the fallback. |
+| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt/QML prototype build and offscreen startup pass in Quality #106. It is not a complete shell or integrated desktop session; XFCE remains the fallback. |
 | Recovery | Recovery environment, restore and rollback tests | Not implemented. |
 | Updates | Signature verification, rollback and recovery tests | Not implemented. |
 | Release integrity | SBOM, provenance, checksums, signed release and license inventory | An ISO SHA-256 exists for Build #39; complete SBOM, provenance and signed release evidence are not established. |
@@ -24,16 +24,16 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 ## Current evidence snapshot — 2026-11-16
 
 - Repository: `ishak6/Nexus-OS-3000-`
-- Active branch: `main`; current HEAD: [`1d337c589548cb37dfa6e5dbb0e5e12957b966e9`](https://github.com/ishak6/Nexus-OS-3000-/commit/1d337c589548cb37dfa6e5dbb0e5e12957b966e9).
-- The repository currently has one branch, no published GitHub releases, and branch protection is not enabled.
-- Latest quality run: [Quality Checks #105](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761496414), on current HEAD, completed successfully. The `repository-checks` job passed:
+- At the time of this snapshot, `main` pointed to the evidence baseline [`fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3`](https://github.com/ishak6/Nexus-OS-3000-/commit/fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3). This commit includes the preceding security-audit consistency changes and this release-gate evidence refresh.
+- The repository has one branch, no published GitHub releases, and branch protection is not enabled.
+- Latest completed quality run for the evidence baseline: [Quality Checks #106](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43920040920), on `fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3`, completed successfully. The `repository-checks` job passed:
   - Harness unit tests: 11 passed.
   - Pulse unit tests: 5 passed.
   - Security-baseline consistency tests: 2 passed.
   - GRUB boot-config and VM smoke-test argument-validation scripts passed.
   - Qt 6/CMake LUMEN build passed.
   - The 8-second Qt offscreen startup smoke test passed.
-- Latest ISO workflow: [Build Nexus OS ISO #39](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453), on commit [`f9b8986612f68c0335563a42d9bf6576d4233800`](https://github.com/ishak6/Nexus-OS-3000-/commit/f9b8986612f68c0335563a42d9bf6576d4233800), three commits behind current HEAD.
+- Latest ISO workflow: [Build Nexus OS ISO #39](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453), on commit [`f9b8986612f68c0335563a42d9bf6576d4233800`](https://github.com/ishak6/Nexus-OS-3000-/commit/f9b8986612f68c0335563a42d9bf6576d4233800), four commits behind the evidence baseline.
   - **Build Debian-based live ISO:** passed.
   - **Boot live ISO in isolated QEMU VM:** failed.
   - The build job's GRUB timeout check and BIOS/UEFI El Torito checks passed.
@@ -41,13 +41,14 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 - Build #39 VM evidence: [`nexus-os-vm-smoke-evidence`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453/artifacts/14180818140), 52,839 bytes, SHA-256 `696e221cc732c0a625b3e2df589b0616b2e05b4e463e924a1502ea07b08c7586`.
 - VM failure evidence: BIOS QEMU TCG, 3 GiB RAM, 2 vCPUs, no NIC and no host disk. The test waited up to 252 seconds for XFCE. The retained screenshot shows the Debian GRUB menu with the live and fail-safe entries still present; OCR did not detect an XFCE desktop marker.
 - The build verified `set timeout_style=menu` and `set timeout=5` in `binary/boot/grub/config.cfg`, but the VM remained at the menu. **The observed failure is confirmed; why the effective BIOS boot path did not leave the menu is not yet established.** The guest kernel/desktop console was not captured, so do not infer a kernel panic or XFCE crash.
-- The combined commit-status query for current HEAD returned an empty status list. Treat that result as **no combined status available**, not as a PASS; the Actions run above is the direct quality evidence.
-- Build #39's ISO artifact is historical evidence for its own commit only. It does not prove that current HEAD builds or boots.
+- The combined commit-status query for the evidence baseline returned an empty status list. Treat that result as **no combined status available**, not as a PASS; Quality Checks #106 is the direct quality evidence.
+- Build #39's ISO artifact is historical evidence for its own commit only. It does not prove that the evidence baseline builds or boots.
+- This evidence refresh changes documentation only. Its follow-up quality run is tracked in the Actions tab; it does not constitute a new ISO build.
 
 ## Next verification tasks
 
 1. Diagnose the GRUB timeout discrepancy using the exact GRUB configuration consumed by the BIOS boot path; retain the generated config and guest boot evidence.
-2. Trigger a fresh ISO build on current HEAD and require the QEMU smoke test to reach the XFCE desktop before treating the live image as boot-verified.
+2. Trigger a fresh ISO build on the evidence baseline and require the QEMU smoke test to reach the XFCE desktop before treating the live image as boot-verified.
 3. Verify the LUMEN launcher and Pulse adapter inside the booted XFCE live session. Keep XFCE as the fallback; do not make LUMEN the default session or remove XFCE until LUMEN boot, integration and recovery are independently verified.
 4. Verify sysctl values and systemd-sysctl status in the live VM; then verify AppArmor mode/profiles and ordinary networking.
 5. Continue implementation and acceptance work for the installer, enforced Harness sandbox, Security Center, Privacy Center, networking controls, recovery and signed updates. Do not mark package presence or UI placeholders as completed functionality.
