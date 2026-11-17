@@ -58,7 +58,7 @@ jobs:
           grep -q "Verify generated GRUB kernel and initrd files" .github/workflows/build-os.yml
           grep -q "bash scripts/verify-live-kernel-staging.sh binary" .github/workflows/build-os.yml
           grep -q "linux-image-amd64" config/package-lists/nexus.list.chroot
-          if grep -Eq '^[[:space:]]*--linux-packages[[:space:]]+none([[:space:]]|$)' .github/workflows/build-os.yml; then
+          if grep -Eq -- '--linux-packages[[:space:]]+none' .github/workflows/build-os.yml; then
             echo "live-build must stage the kernel into the ISO; --linux-packages none disables that step." >&2
             exit 1
           fi
