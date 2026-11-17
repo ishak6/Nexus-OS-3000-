@@ -91,13 +91,15 @@ jobs:
           cat > config/archives/nexus-security.list.binary <<'EOF'
           deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
           EOF
+          # Keep live-build's default linux-image handling enabled. Setting
+          # --linux-packages none disables the kernel staging step and leaves
+          # the generated GRUB entries pointing at files absent from /live.
           sudo lb config \
             --mode debian \
             --distribution trixie \
             --initramfs live-boot \
             --initsystem systemd \
             --architectures amd64 \
-            --linux-packages none \
             --binary-images iso-hybrid \
             --archive-areas "main contrib non-free non-free-firmware" \
             --bootloaders "grub-pc grub-efi" \
@@ -124,6 +126,9 @@ jobs:
         run: |
           set -euo pipefail
           sudo lb build 2>&1 | tee build.log
+
+      - name: Verify generated GRUB kernel and initrd files
+        run: bash scripts/verify-live-kernel-staging.sh binary
 
       - name: Verify generated GRUB timeout
         run: |
