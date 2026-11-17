@@ -30,6 +30,9 @@ QEMU_LOG="$OUT_DIR/qemu.log"
 SCREENSHOT="$OUT_DIR/desktop.ppm"
 OCR_BASE="$OUT_DIR/desktop"
 OCR_TEXT="$OCR_BASE.txt"
+GRUB_SCREENSHOT="$OUT_DIR/grub-after-timeout.ppm"
+GRUB_OCR_BASE="$OUT_DIR/grub-after-timeout"
+GRUB_OCR_TEXT="$OUT_DIR/grub-after-timeout.txt"
 RESULT="$OUT_DIR/result.txt"
 QEMU_PID=""
 
@@ -41,7 +44,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-rm -f "$MONITOR_SOCKET" "$SCREENSHOT" "$OCR_TEXT"
+rm -f "$MONITOR_SOCKET" "$SCREENSHOT" "$OCR_TEXT" "$GRUB_SCREENSHOT" "$GRUB_OCR_TEXT"
 : > "$QEMU_LOG"
 
 echo "Starting BIOS live-ISO boot in QEMU TCG (3 GiB RAM, 2 vCPUs, no NIC, no host disk)."
@@ -83,6 +86,42 @@ fi
 # default-entry timeout finish before collecting desktop screenshots.
 echo "Allowing the default live entry to boot automatically."
 sleep 8
+if python3 - "$MONITOR_SOCKET" "$GRUB_SCREENSHOT" <<'PY'
+import socket
+import sys
+import time
+
+monitor_path, screenshot_path = sys.argv[1:3]
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+sock.settimeout(5)
+sock.connect(monitor_path)
+
+def read_prompt():
+    data = bytearray()
+    deadline = time.monotonic() + 5
+    while b"(qemu)" not in data and time.monotonic() < deadline:
+        try:
+            chunk = sock.recv(4096)
+        except socket.timeout:
+            break
+        if not chunk:
+            break
+        data.extend(chunk)
+    return bytes(data)
+
+read_prompt()
+sock.sendall(f"screendump {screenshot_path}\n".encode())
+response = read_prompt()
+sock.close()
+
+if b"Error" in response or b"Could not" in response:
+    raise SystemExit(response.decode(errors="replace"))
+PY
+then
+  tesseract "$GRUB_SCREENSHOT" "$GRUB_OCR_BASE" --psm 6 2>/dev/null || true
+else
+  echo "Could not capture the post-timeout GRUB diagnostic screenshot." >&2
+fi
 
 echo "Waiting up to 252 seconds for the XFCE desktop to appear."
 for attempt in $(seq 1 36); do
@@ -149,8 +188,12 @@ done
   echo "FAIL: QEMU remained available but the XFCE desktop marker was not detected."
   echo "The screenshot and OCR output are retained for diagnosis."
 } | tee "$RESULT" >&2
+if [[ -s "$GRUB_OCR_TEXT" ]]; then
+  echo "--- Post-timeout GRUB OCR output ---" >&2
+  cat "$GRUB_OCR_TEXT" >&2
+fi
 if [[ -s "$OCR_TEXT" ]]; then
-  echo "--- OCR output ---" >&2
+  echo "--- Final desktop OCR output ---" >&2
   cat "$OCR_TEXT" >&2
 fi
 echo "--- QEMU log ---" >&2

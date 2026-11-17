@@ -4,9 +4,9 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 
 | Gate | Required evidence | Current state |
 |---|---|---|
-| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on evidence baseline `fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3` via Quality Checks #106. |
-| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS for Build #39's build job only**, on older commit `f9b8986612f68c0335563a42d9bf6576d4233800`. The ISO and checksum were uploaded. The evidence baseline has no ISO build yet. |
-| VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **FAIL** in Build #39. QEMU remained at the GRUB menu; the XFCE desktop marker was not detected. |
+| Repository quality | CI checks and unit tests pass on `66de1728e7d63db54337f679f957db9945daa3c2` via Quality Checks #108. The diagnostic update in this commit is pending its own CI run. |
+| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS for Build #39's build job only**, on older commit `f9b8986612f68c0335563a42d9bf6576d4233800`. The current main commit has no ISO build yet. |
+| VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **FAIL** in Build #39. The BIOS VM remained at the GRUB menu after the 252-second wait; no XFCE desktop marker was detected. The reason the timeout did not advance is still unconfirmed. |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false`. |
 | Hardware basics | Display, keyboard, storage, network, audio and shutdown/reboot | Not tested on a declared hardware/VM matrix. |
 | Security baseline | Runtime sysctl values and service status | Configuration is staged and static consistency tests pass; runtime state is not verified. |
@@ -16,43 +16,40 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 | Harness policy | Manifest validator and archive inspection tests | Static policy and archive-inspection tests pass. This is not runtime sandbox enforcement. |
 | Sandbox runtime | Boundary tests, resource limits, revocation and escape-resistance evidence | Not implemented/verified. |
 | Privacy controls | Data-flow inventory, permission enforcement and opt-in/revocation tests | Specification exists; runtime permission enforcement is not implemented. |
-| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt/QML prototype build and offscreen startup pass in Quality #106. It is not a complete shell or integrated desktop session; XFCE remains the fallback. |
+| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt 6/CMake prototype build and 8-second offscreen startup pass in Quality #108. It is not a complete shell or integrated desktop session; XFCE remains the fallback. |
 | Recovery | Recovery environment, restore and rollback tests | Not implemented. |
 | Updates | Signature verification, rollback and recovery tests | Not implemented. |
 | Release integrity | SBOM, provenance, checksums, signed release and license inventory | An ISO SHA-256 exists for Build #39; complete SBOM, provenance and signed release evidence are not established. |
 
-## Current evidence snapshot — 2026-11-16
+## Current evidence snapshot — 2026-11-17
 
 - Repository: `ishak6/Nexus-OS-3000-`
-- At the time of this snapshot, `main` pointed to the evidence baseline [`fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3`](https://github.com/ishak6/Nexus-OS-3000-/commit/fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3). This commit includes the preceding security-audit consistency changes and this release-gate evidence refresh.
-- The repository has one branch, no published GitHub releases, and branch protection is not enabled.
-- Latest completed quality run for the evidence baseline: [Quality Checks #106](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43920040920), on `fccde56a10706d97b59cf5ca3f86bfb1e06fd9c3`, completed successfully. The `repository-checks` job passed:
+- The last fully verified source commit at the start of this monitoring run was [`66de1728e7d63db54337f679f957db9945daa3c2`](https://github.com/ishak6/Nexus-OS-3000-/commit/66de1728e7d63db54337f679f957db9945daa3c2).
+- [Quality Checks #108](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43920896069) completed successfully on that exact commit. All 10 repository-check job steps completed successfully:
   - Harness unit tests: 11 passed.
   - Pulse unit tests: 5 passed.
   - Security-baseline consistency tests: 2 passed.
-  - GRUB boot-config and VM smoke-test argument-validation scripts passed.
-  - Qt 6/CMake LUMEN build passed.
+  - GRUB boot-config and VM smoke-test input-validation tests passed.
+  - Qt 6/CMake LUMEN prototype build passed.
   - The 8-second Qt offscreen startup smoke test passed.
-- Latest ISO workflow: [Build Nexus OS ISO #39](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453), on commit [`f9b8986612f68c0335563a42d9bf6576d4233800`](https://github.com/ishak6/Nexus-OS-3000-/commit/f9b8986612f68c0335563a42d9bf6576d4233800), four commits behind the evidence baseline.
+- Latest ISO workflow remains [Build Nexus OS ISO #39](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453), on older commit [`f9b8986612f68c0335563a42d9bf6576d4233800`](https://github.com/ishak6/Nexus-OS-3000-/commit/f9b8986612f68c0335563a42d9bf6576d4233800), six commits behind the reviewed main commit.
   - **Build Debian-based live ISO:** passed.
   - **Boot live ISO in isolated QEMU VM:** failed.
-  - The build job's GRUB timeout check and BIOS/UEFI El Torito checks passed.
-- Build #39 ISO artifact: [`nexus-os-3000-iso`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453/artifacts/14180587860), 1,041,391,873 bytes. The ISO file SHA-256 printed by the build job is `3947cf2b9a37d5a9063fc9a18dbc6a86e52e89745ee34bcd45bf48d0a7ac7e68`; the GitHub artifact ZIP digest is `217bb267008a48dcb4f72c39aab959a36b6e6ffc88abb2fc1c407b8b27ec9a57`.
-- Build #39 VM evidence: [`nexus-os-vm-smoke-evidence`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453/artifacts/14180818140), 52,839 bytes, GitHub artifact ZIP digest `696e221cc732c0a625b3e2df589b0616b2e05b4e463e924a1502ea07b08c7586`.
-- VM failure evidence: BIOS QEMU TCG, 3 GiB RAM, 2 vCPUs, no NIC and no host disk. The test waited up to 252 seconds for XFCE. The retained screenshot shows the Debian GRUB menu with the live and fail-safe entries still present; OCR did not detect an XFCE desktop marker.
-- The build verified `set timeout_style=menu` and `set timeout=5` in `binary/boot/grub/config.cfg`, but the VM remained at the menu. **The observed failure is confirmed; why the effective BIOS boot path did not leave the menu is not yet established.** The guest kernel/desktop console was not captured, so do not infer a kernel panic or XFCE crash.
-- The combined commit-status query for the evidence baseline returned an empty status list. Treat that result as **no combined status available**, not as a PASS; Quality Checks #106 is the direct quality evidence.
-- Build #39's ISO artifact is historical evidence for its own commit only. It does not prove that the evidence baseline builds or boots.
-- This evidence refresh changes documentation only. Its follow-up quality run is tracked in the Actions tab; it does not constitute a new ISO build.
+  - The build job verified BIOS and UEFI El Torito entries and found `set timeout_style=menu` plus `set timeout=5` in `binary/boot/grub/config.cfg`.
+- Build #39 ISO artifact: [`nexus-os-3000-iso`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453/artifacts/14180587860), 1,041,391,873 bytes. ISO file SHA-256: `3947cf2b9a37d5a9063fc9a18dbc6a86e52e89745ee34bcd45bf48d0a7ac7e68`. GitHub artifact ZIP digest: `217bb267008a48dcb4f72c39aab959a36b6e6ffc88abb2fc1c407b8b27ec9a57`.
+- Build #39 VM evidence: [`nexus-os-vm-smoke-evidence`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/43761385453/artifacts/14180818140), 52,839 bytes; artifact ZIP digest `696e221cc732c0a625b3e2df589b0616b2e05b4e463e924a1502ea07b08c7586`.
+- The downloaded 800×600 VM screenshot was inspected. It shows the Debian GRUB menu with `Live system (amd64)`, fail-safe and utilities entries still visible. The VM smoke test waited up to 252 seconds. OCR did not detect XFCE; the QEMU log contains only its shutdown line, not guest kernel or desktop output.
+- **Confirmed failure mode:** the BIOS guest remained at the GRUB menu instead of reaching the live entry. **Underlying cause is not yet proven.** The build log confirms the generated config file has a five-second timeout, and the Debian Trixie live-build GRUB template sources `/boot/grub/config.cfg`; however, the exact config files extracted from Build #39's ISO were not retained. Do not infer a kernel panic or XFCE crash from the available evidence.
+- This monitoring update adds an ISO-level GRUB config extraction artifact and an immediate post-timeout VM screenshot/OCR capture. Those new diagnostics are not PASS evidence until their triggered Actions runs complete.
+- The repository currently has one branch (`main`), no published GitHub releases, and branch protection is not enabled. Build #39 remains historical evidence for its own commit only; it does not prove that the reviewed main commit builds or boots.
 
 ## Next verification tasks
 
-1. Diagnose the GRUB timeout discrepancy using the exact GRUB configuration consumed by the BIOS boot path; retain the generated config and guest boot evidence.
-2. Trigger a fresh ISO build on the evidence baseline and require the QEMU smoke test to reach the XFCE desktop before treating the live image as boot-verified.
-3. Verify the LUMEN launcher and Pulse adapter inside the booted XFCE live session. Keep XFCE as the fallback; do not make LUMEN the default session or remove XFCE until LUMEN boot, integration and recovery are independently verified.
+1. Run the newly instrumented ISO workflow on the current main commit. Inspect the extracted `/boot/grub/config.cfg` and `/boot/grub/grub.cfg` artifact before changing boot defaults.
+2. If the extracted ISO config contains the expected timeout and source relationship, isolate the GRUB/QEMU runtime behavior with guest-visible boot diagnostics. Do not use manual key injection to turn an automatic-boot failure into a pass.
+3. Require the QEMU smoke test to reach the XFCE desktop. Then verify the LUMEN launcher and Pulse adapter inside that live session. Keep XFCE as fallback; do not make LUMEN the default or remove XFCE until LUMEN boot, integration and recovery are independently verified.
 4. Verify sysctl values and systemd-sysctl status in the live VM; then verify AppArmor mode/profiles and ordinary networking.
-5. Continue implementation and acceptance work for the installer, enforced Harness sandbox, Security Center, Privacy Center, networking controls, recovery and signed updates. Do not mark package presence or UI placeholders as completed functionality.
-
+5. Continue implementation and acceptance work for the installer, enforced Harness sandbox, Security Center, Privacy Center, networking controls, recovery and signed updates. Package presence or UI placeholders are not completion evidence.
 ## Minimum VM test plan
 
 1. Create a disposable VM and attach the ISO as virtual optical media.

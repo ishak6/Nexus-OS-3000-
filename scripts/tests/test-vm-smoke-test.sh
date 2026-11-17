@@ -24,4 +24,8 @@ set -e
 grep -Fq 'ISO is missing or empty:' <<<"$empty_output"
 [[ ! -e "$TMP/evidence/qemu-monitor.sock" ]]
 
+# Preserve the immediate post-timeout screen for GRUB timer diagnosis.
+grep -Fq 'grub-after-timeout.ppm' "$SMOKE_TEST"
+grep -Fq 'grub-after-timeout.txt' "$SMOKE_TEST"
+
 echo "VM smoke-test argument and input validation tests passed."

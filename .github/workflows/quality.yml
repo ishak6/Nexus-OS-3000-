@@ -52,6 +52,10 @@ jobs:
           grep -q "report_el_torito plain" .github/workflows/build-os.yml
           grep -q "scripts/configure-live-bootloader.sh" .github/workflows/build-os.yml
           grep -q "binary/boot/grub/config.cfg" .github/workflows/build-os.yml
+          grep -q "Extract effective GRUB configuration from ISO" .github/workflows/build-os.yml
+          grep -q "nexus-os-grub-boot-evidence" .github/workflows/build-os.yml
+          grep -q "grub-after-timeout.ppm" scripts/vm-smoke-test.sh
+          grep -q "grub-after-timeout.txt" scripts/vm-smoke-test.sh
           grep -q "set timeout=5" scripts/configure-live-bootloader.sh
           grep -q "ISO selects GRUB" scripts/vm-smoke-test.sh
           if grep -q "ISOLINUX menu" scripts/vm-smoke-test.sh; then

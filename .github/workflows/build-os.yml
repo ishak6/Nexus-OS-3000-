@@ -158,6 +158,30 @@ jobs:
           done
           sudo chown -R "$USER":"$USER" .
 
+      - name: Extract effective GRUB configuration from ISO
+        run: |
+          set -euo pipefail
+          image="$(find . -maxdepth 1 -type f -name '*.iso' -print -quit)"
+          if [ -z "$image" ]; then
+            echo "No ISO available for GRUB configuration extraction." >&2
+            exit 1
+          fi
+          mkdir -p grub-boot-evidence
+          xorriso -osirrox on -indev "$image" \
+            -extract /boot/grub/config.cfg grub-boot-evidence/config.cfg
+          xorriso -osirrox on -indev "$image" \
+            -extract /boot/grub/grub.cfg grub-boot-evidence/grub.cfg
+          test -s grub-boot-evidence/config.cfg
+          test -s grub-boot-evidence/grub.cfg
+          grep -Fxq 'set timeout_style=menu' grub-boot-evidence/config.cfg
+          grep -Fxq 'set timeout=5' grub-boot-evidence/config.cfg
+          grep -Fxq 'source /boot/grub/config.cfg' grub-boot-evidence/grub.cfg
+          echo "=== /boot/grub/config.cfg extracted from the ISO ==="
+          cat grub-boot-evidence/config.cfg
+          echo "=== /boot/grub/grub.cfg extracted from the ISO ==="
+          cat grub-boot-evidence/grub.cfg
+          sha256sum grub-boot-evidence/*
+
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
@@ -165,6 +189,14 @@ jobs:
           path: |
             *.iso
             *.iso.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload effective GRUB configuration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-os-grub-boot-evidence
+          path: grub-boot-evidence/
           if-no-files-found: error
           retention-days: 14
 
