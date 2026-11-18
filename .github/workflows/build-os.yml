@@ -122,6 +122,9 @@ jobs:
           test -s config/includes.chroot/usr/lib/nexus/pulse/telemetry.py
           test -s config/includes.chroot/usr/share/applications/nexus-lumen.desktop
 
+      - name: Verify live-config runtime packages
+        run: bash scripts/tests/test-live-config-packages.sh
+
       - name: Build ISO
         run: |
           set -euo pipefail
@@ -181,6 +184,10 @@ jobs:
           grep -Fxq 'set timeout_style=menu' grub-boot-evidence/config.cfg
           grep -Fxq 'set timeout=5' grub-boot-evidence/config.cfg
           grep -Fxq 'source /boot/grub/config.cfg' grub-boot-evidence/grub.cfg
+          if ! grep -Eq '^[[:space:]]*linux[[:space:]].*boot=live components([[:space:]]|$)' grub-boot-evidence/grub.cfg; then
+            echo "ISO GRUB entries must activate live-config with boot=live components." >&2
+            exit 1
+          fi
           echo "=== /boot/grub/config.cfg extracted from the ISO ==="
           cat grub-boot-evidence/config.cfg
           echo "=== /boot/grub/grub.cfg extracted from the ISO ==="

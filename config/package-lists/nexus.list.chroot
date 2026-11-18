@@ -1,6 +1,10 @@
 # Core live system
 live-boot
+# Generic live-config components create the live user and configure LightDM autologin.
+live-config
 live-config-systemd
+# Recommends are disabled for this image, so install the live user helper explicitly.
+user-setup
 linux-image-amd64
 systemd
 systemd-sysv
