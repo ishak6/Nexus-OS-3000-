@@ -28,4 +28,11 @@ grep -Fq 'ISO is missing or empty:' <<<"$empty_output"
 grep -Fq 'grub-after-timeout.ppm' "$SMOKE_TEST"
 grep -Fq 'grub-after-timeout.txt' "$SMOKE_TEST"
 
-echo "VM smoke-test argument and input validation tests passed."
+# The desktop check must inspect the XFCE top panel separately from desktop icons.
+grep -Fq 'desktop-top-panel.ppm' "$SMOKE_TEST"
+grep -Fq 'crop-ppm-top-panel.py' "$SMOKE_TEST"
+grep -Fq "grep -Eqi 'Home'" "$SMOKE_TEST"
+grep -Fq "grep -Eqi 'File System'" "$SMOKE_TEST"
+grep -Fq "grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN'" "$SMOKE_TEST"
+
+echo "VM smoke-test argument and desktop-marker validation tests passed."
