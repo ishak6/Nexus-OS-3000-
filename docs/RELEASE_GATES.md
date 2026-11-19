@@ -4,7 +4,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 
 | Gate | Required evidence | Current state |
 |---|---|---|
-| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on `899fd5234673bed42b515dbcad8858fa9973c796` via Quality Checks #119; current HEAD `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8` Quality Checks #121 is in progress. |
+| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on `899fd5234673bed42b515dbcad8858fa9973c796` via Quality Checks #119; latest docs-only HEAD `d6d131b43671b8b10c161565de9965b589bd7512` has Quality Checks #122 in progress; the code/test commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8` has Quality Checks #121 in progress. |
 | ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS** for Build #42 on `d650121e37926a65acf8968c079cbd81839615ff`; a new build on current HEAD is pending in Build #45. |
 | VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **XFCE desktop visibly reached** in Build #42 evidence; the job failed because full-screen OCR missed the top-panel `Applications` label. A cropped-panel detector fix is committed; a new QEMU run is pending. |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false`. |
@@ -23,13 +23,13 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 
 ## Evidence update — 2026-11-19
 
-- Current `main` head: [`c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`](https://github.com/ishak6/Nexus-OS-3000-/commit/c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8).
+- Current `main` head: [`d6d131b43671b8b10c161565de9965b589bd7512`](https://github.com/ishak6/Nexus-OS-3000-/commit/d6d131b43671b8b10c161565de9965b589bd7512).
 - [Build Nexus OS ISO #42](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44356766810) completed its ISO build, kernel/initrd checks, GRUB checks, BIOS/UEFI entry checks, and artifact uploads. The ISO artifact is 1,171,360,984 bytes; its Actions artifact ZIP digest is `a31629ad200298db499fe3c8fabf4f8e626cd4263045ca936fd02ac29b15babe`.
 - Build #42's QEMU job returned failure because the smoke test searched for `Applications` in the full-screen Tesseract PSM 6 output. I downloaded and inspected the retained `desktop.ppm` (1280x800): it visibly shows the XFCE top panel, `Applications` menu, `Home` and `File System` desktop icons, and the bottom panel/dock. The captured full-screen OCR contained `Home` and `File System` but omitted the small top-panel text. This is a detector false negative, not evidence that the guest failed to reach XFCE.
 - Reprocessing the exact Build #42 screenshot with a 45-pixel top-panel crop and Tesseract PSM 6 returned `Applications`; the combined desktop-icon and top-panel detection passed locally.
 - Added `scripts/crop-ppm-top-panel.py`, five unit tests in `scripts/tests/test-crop-ppm-top-panel.py`, and updated the VM smoke test to preserve and OCR the top panel separately. The existing VM smoke-test regression test and Quality workflow now include these checks.
-- [Quality Checks #119](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576469977) passed on `899fd5234673bed42b515dbcad8858fa9973c796`. [Quality Checks #121](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664664) is running on current HEAD `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; repository, Python, Harness, Pulse, and VM tooling tests have passed, while Qt dependency installation is still in progress.
-- [Build Nexus OS ISO #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860) is queued on current HEAD. It now runs the VM smoke-test preflight before installing the ISO build toolchain. The corrected detector is not yet verified in a fresh QEMU run.
+- [Quality Checks #119](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576469977) passed on `899fd5234673bed42b515dbcad8858fa9973c796`. [Quality Checks #121](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664664) is running on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; repository, Python, Harness, Pulse, and VM tooling tests have passed, while Qt dependency installation is still in progress. Quality #122 is the documentation-only run on current main.
+- [Build Nexus OS ISO #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860) is running on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`. It now runs the VM smoke-test preflight before installing the ISO build toolchain. The corrected detector is not yet verified in a fresh QEMU run.
 - XFCE remains the fallback. Build #42 proves XFCE live desktop startup only; it does not prove LUMEN session integration or a LUMEN desktop boot.
 ## Historical evidence snapshot — 2026-11-17
 
