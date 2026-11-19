@@ -26,6 +26,8 @@ jobs:
           test -s harness/inspection/inspect_archive.py
           test -s scripts/security-audit.sh
           test -s scripts/vm-smoke-test.sh
+          test -s scripts/crop-ppm-top-panel.py
+          test -s scripts/tests/test-crop-ppm-top-panel.py
           test -s scripts/configure-live-bootloader.sh
           test -s scripts/verify-live-kernel-staging.sh
           test -s scripts/tests/test-live-kernel-staging.sh
@@ -68,6 +70,8 @@ jobs:
           grep -q "nexus-os-grub-boot-evidence" .github/workflows/build-os.yml
           grep -q "grub-after-timeout.ppm" scripts/vm-smoke-test.sh
           grep -q "grub-after-timeout.txt" scripts/vm-smoke-test.sh
+          grep -q "desktop-top-panel.ppm" scripts/vm-smoke-test.sh
+          grep -q "crop-ppm-top-panel.py" scripts/vm-smoke-test.sh
           grep -q "set timeout=5" scripts/configure-live-bootloader.sh
           grep -q "ISO selects GRUB" scripts/vm-smoke-test.sh
           if grep -q "ISOLINUX menu" scripts/vm-smoke-test.sh; then
@@ -104,6 +108,8 @@ jobs:
           set -euo pipefail
           bash -n scripts/security-audit.sh
           bash -n scripts/vm-smoke-test.sh
+          python3 -m py_compile scripts/crop-ppm-top-panel.py
+          python3 scripts/tests/test-crop-ppm-top-panel.py
           bash -n scripts/configure-live-bootloader.sh
           bash -n scripts/verify-live-kernel-staging.sh
           bash -n scripts/tests/test-live-kernel-staging.sh
