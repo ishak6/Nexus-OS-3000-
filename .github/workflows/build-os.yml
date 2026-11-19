@@ -28,6 +28,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Validate VM smoke-test tooling
+        run: |
+          set -euo pipefail
+          bash -n scripts/vm-smoke-test.sh
+          bash scripts/tests/test-vm-smoke-test.sh
+          python3 -m py_compile scripts/crop-ppm-top-panel.py
+          python3 scripts/tests/test-crop-ppm-top-panel.py
+
       - name: Install Debian Trixie live-build and ISO tooling
         run: |
           set -euo pipefail
