@@ -177,7 +177,7 @@ PY
 
     # Tesseract full-screen PSM 6 can miss the small XFCE top-panel label.
     # Crop the top panel and OCR it separately, while checking desktop icons too.
-    if python3 scripts/crop-ppm-top-panel.py "$SCREENSHOT" "$TOP_PANEL_SCREENSHOT" 64; then
+    if python3 scripts/crop-ppm-top-panel.py "$SCREENSHOT" "$TOP_PANEL_SCREENSHOT" 45; then
       tesseract "$TOP_PANEL_SCREENSHOT" "$TOP_PANEL_OCR_BASE" --psm 6 2>/dev/null || true
     fi
 
