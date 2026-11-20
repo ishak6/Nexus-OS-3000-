@@ -4,7 +4,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 
 | Gate | Required evidence | Current state |
 |---|---|---|
-| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on current `main` head `d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3` via [Quality Checks #123](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576986347). |
+| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on current `main` head `1215ed8a223bf33fd2092d9e13274ba7e38ca0dd` via [Quality Checks #124](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44783857554). |
 | ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS** for [Build #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860), built from code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; ISO SHA-256 is recorded below. |
 | VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **PASS** for Build #45: isolated QEMU BIOS boot reached the XFCE desktop on attempt 15. UEFI boot has not been exercised in QEMU. |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false`. |
@@ -24,7 +24,7 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 ## Current evidence update — 2026-11-20
 
 - Current `main` head at the time of this update: [`d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3`](https://github.com/ishak6/Nexus-OS-3000-/commit/d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3). This is a documentation snapshot commit; Build #45 tested the immediately preceding code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`.
-- [Quality Checks #123](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576986347) completed successfully on the exact `d2f2537` main commit. The run's repository-checks job passed.
+- [Quality Checks #123](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576986347) passed on documentation commit `d2f2537`; [Quality Checks #124](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44783857554) passed on the exact current `1215ed8` main commit. Both repository-checks jobs completed successfully.
 - [Build Nexus OS ISO #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860) completed successfully on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`. Both jobs passed: `Build Debian-based live ISO` and `Boot live ISO in isolated QEMU VM`.
 - Build #45 passed VM tooling preflight, Debian Trixie live-build dependency installation, live configuration, LUMEN compile/staging, live-config package checks, ISO creation, GRUB kernel/initrd staging validation, GRUB timeout validation, BIOS/UEFI El Torito entry validation, checksum generation, GRUB configuration extraction, and artifact uploads.
 - The raw ISO is `live-image-amd64.hybrid.iso`. Its SHA-256, recorded by the build log, is `94a1e9c7524dc2bee250fdd80dd594ce8bec6165512f641e4a12044e21786a38`. The ISO contains 577,409 2,048-byte sectors (1,182,533,632 bytes).
