@@ -1,12 +1,12 @@
 # Release Gates and Verification Matrix
 
-A release claim requires repeatable evidence. A green workflow alone does not certify a bootable or secure OS.
+A release claim requires repeatable evidence. A green workflow alone does not certify a secure or production-ready OS.
 
 | Gate | Required evidence | Current state |
 |---|---|---|
-| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on `899fd5234673bed42b515dbcad8858fa9973c796` via Quality Checks #119; latest docs-only HEAD `d6d131b43671b8b10c161565de9965b589bd7512` has Quality Checks #122 in progress; the code/test commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8` has Quality Checks #121 in progress. |
-| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS** for Build #42 on `d650121e37926a65acf8968c079cbd81839615ff`; a new build on current HEAD is pending in Build #45. |
-| VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **XFCE desktop visibly reached** in Build #42 evidence; the job failed because full-screen OCR missed the top-panel `Applications` label. A cropped-panel detector fix is committed; a new QEMU run is pending. |
+| Repository quality | CI checks and unit tests pass on the exact candidate commit | **PASS** on current `main` head `d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3` via [Quality Checks #123](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576986347). |
+| ISO build | Non-empty ISO, SHA-256, BIOS/UEFI entries and retained artifact | **PASS** for [Build #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860), built from code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; ISO SHA-256 is recorded below. |
+| VM boot | Boot log and screenshot showing the live desktop, with no host disk or network | **PASS** for Build #45: isolated QEMU BIOS boot reached the XFCE desktop on attempt 15. UEFI boot has not been exercised in QEMU. |
 | Installer | Guided installation, safe disk selection and install verification | Not implemented; the live-build workflow sets `--debian-installer false`. |
 | Hardware basics | Display, keyboard, storage, network, audio and shutdown/reboot | Not tested on a declared hardware/VM matrix. |
 | Security baseline | Runtime sysctl values and service status | Configuration is staged and static consistency tests pass; runtime state is not verified. |
@@ -16,53 +16,57 @@ A release claim requires repeatable evidence. A green workflow alone does not ce
 | Harness policy | Manifest validator and archive inspection tests | Static policy and archive-inspection tests pass. This is not runtime sandbox enforcement. |
 | Sandbox runtime | Boundary tests, resource limits, revocation and escape-resistance evidence | Not implemented/verified. |
 | Privacy controls | Data-flow inventory, permission enforcement and opt-in/revocation tests | Specification exists; runtime permission enforcement is not implemented. |
-| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt 6/CMake prototype build and 8-second offscreen startup pass in Quality #111. It is not a complete shell or integrated desktop session; XFCE remains the fallback. |
+| LUMEN desktop | Native shell build, startup, session integration and accessibility tests | Qt 6/CMake prototype build and 8-second offscreen startup pass in Quality #123. LUMEN has not been launched/verified inside the live XFCE session and is not an integrated desktop shell; XFCE remains the fallback. |
 | Recovery | Recovery environment, restore and rollback tests | Not implemented. |
 | Updates | Signature verification, rollback and recovery tests | Not implemented. |
-| Release integrity | SBOM, provenance, checksums, signed release and license inventory | An ISO SHA-256 exists for Build #39; complete SBOM, provenance and signed release evidence are not established. |
+| Release integrity | SBOM, provenance, checksums, signed release and license inventory | Build #45 ISO SHA-256 and Actions artifact ZIP digests are recorded below. Complete SBOM, provenance, signed release and license inventory are not established. |
 
-## Evidence update — 2026-11-19
+## Current evidence update — 2026-11-20
 
-- Current `main` head: [`d6d131b43671b8b10c161565de9965b589bd7512`](https://github.com/ishak6/Nexus-OS-3000-/commit/d6d131b43671b8b10c161565de9965b589bd7512).
-- [Build Nexus OS ISO #42](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44356766810) completed its ISO build, kernel/initrd checks, GRUB checks, BIOS/UEFI entry checks, and artifact uploads. The ISO artifact is 1,171,360,984 bytes; its Actions artifact ZIP digest is `a31629ad200298db499fe3c8fabf4f8e626cd4263045ca936fd02ac29b15babe`.
-- Build #42's QEMU job returned failure because the smoke test searched for `Applications` in the full-screen Tesseract PSM 6 output. I downloaded and inspected the retained `desktop.ppm` (1280x800): it visibly shows the XFCE top panel, `Applications` menu, `Home` and `File System` desktop icons, and the bottom panel/dock. The captured full-screen OCR contained `Home` and `File System` but omitted the small top-panel text. This is a detector false negative, not evidence that the guest failed to reach XFCE.
-- Reprocessing the exact Build #42 screenshot with a 45-pixel top-panel crop and Tesseract PSM 6 returned `Applications`; the combined desktop-icon and top-panel detection passed locally.
-- Added `scripts/crop-ppm-top-panel.py`, five unit tests in `scripts/tests/test-crop-ppm-top-panel.py`, and updated the VM smoke test to preserve and OCR the top panel separately. The existing VM smoke-test regression test and Quality workflow now include these checks.
-- [Quality Checks #119](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576469977) passed on `899fd5234673bed42b515dbcad8858fa9973c796`. [Quality Checks #121](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664664) is running on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; repository, Python, Harness, Pulse, and VM tooling tests have passed, while Qt dependency installation is still in progress. Quality #122 is the documentation-only run on current main.
-- [Build Nexus OS ISO #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860) is running on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`. It now runs the VM smoke-test preflight before installing the ISO build toolchain. The corrected detector is not yet verified in a fresh QEMU run.
-- XFCE remains the fallback. Build #42 proves XFCE live desktop startup only; it does not prove LUMEN session integration or a LUMEN desktop boot.
+- Current `main` head at the time of this update: [`d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3`](https://github.com/ishak6/Nexus-OS-3000-/commit/d2f2537cdd0f5ea16929f7c3eef3001f0f2b59a3). This is a documentation snapshot commit; Build #45 tested the immediately preceding code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`.
+- [Quality Checks #123](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576986347) completed successfully on the exact `d2f2537` main commit. The run's repository-checks job passed.
+- [Build Nexus OS ISO #45](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860) completed successfully on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`. Both jobs passed: `Build Debian-based live ISO` and `Boot live ISO in isolated QEMU VM`.
+- Build #45 passed VM tooling preflight, Debian Trixie live-build dependency installation, live configuration, LUMEN compile/staging, live-config package checks, ISO creation, GRUB kernel/initrd staging validation, GRUB timeout validation, BIOS/UEFI El Torito entry validation, checksum generation, GRUB configuration extraction, and artifact uploads.
+- The raw ISO is `live-image-amd64.hybrid.iso`. Its SHA-256, recorded by the build log, is `94a1e9c7524dc2bee250fdd80dd594ce8bec6165512f641e4a12044e21786a38`. The ISO contains 577,409 2,048-byte sectors (1,182,533,632 bytes).
+- ISO artifact: [`nexus-os-3000-iso`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860/artifacts/14557279742), artifact ID `14557279742`; Actions artifact ZIP size 1,171,308,864 bytes; ZIP digest `sha256:6c63fe5e3bb0e15c0df67351c357d80a2f6b672f67b3b6918bd4b2cc8da97059`. The ZIP digest is not the raw ISO SHA-256.
+- GRUB evidence: [artifact ID `14558151735`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860/artifacts/14558151735); ZIP digest `sha256:7d1c9a7d985c4ae0f60cda51fb6c3bc9fc77c36f51ff66a255d3810fa7f525e8`.
+- VM evidence: [artifact ID `14557134339`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664860/artifacts/14557134339); ZIP digest `sha256:c1424e7de327dc9ef14a14ad51068521b7bfacc5d9362ae96d4203224e63c921`. The archive contains `desktop.ppm`, `desktop-top-panel.ppm`, `grub-after-timeout.ppm`, OCR outputs, `qemu.log`, and `result.txt`.
+- The Build #45 VM result states: `PASS: QEMU BIOS boot reached the XFCE desktop.` It succeeded on attempt 15 in QEMU TCG with a read-only ISO, no host disk and no network. I downloaded and inspected the 1280x800 screenshot: the XFCE Applications panel, Home and File System desktop icons, and bottom panel/dock are visible. The cropped top-panel OCR contains `Applications`.
+- Build #42's earlier VM job failure was an OCR false negative: the screenshot already showed XFCE, but full-screen OCR missed the small top-panel label. The 45-pixel top-panel crop and combined detection now pass in the fresh Build #45 VM run. This is not evidence of an XFCE boot failure.
+- Quality #123 also passed the Qt 6/CMake LUMEN prototype build and 8-second offscreen startup smoke test. That test does not establish LUMEN startup in the live XFCE session, desktop integration, or a LUMEN session boot.
+- The repository has one branch (`main`), no published GitHub releases, and branch protection is disabled. XFCE remains the fallback; do not remove it or make LUMEN the default until LUMEN launch, session integration and recovery are independently verified.
+
+## Historical evidence snapshot — 2026-11-19
+
+- [Quality Checks #119](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576469977) passed on `899fd5234673bed42b515dbcad8858fa9973c796`; [Quality Checks #121](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576664664) passed on code commit `c8cf2ba620fd20b29ce8b5f84d8c968e2dc5f1d8`; [Quality Checks #122](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44576859678) passed on `d6d131b43671b8b10c161565de9965b589bd7512`.
+- Build #42's screenshot demonstrated that XFCE had started despite the initial full-screen OCR false negative. The detector correction added `scripts/crop-ppm-top-panel.py`, five regression tests in `scripts/tests/test-crop-ppm-top-panel.py`, and separate top-panel OCR in `scripts/vm-smoke-test.sh`.
+- [Build #42](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44356766810) produced an ISO but its QEMU job failed only because the old detector missed the small top-panel label. Build #45 is the successful fresh boot verification for the corrected detector.
+
 ## Historical evidence snapshot — 2026-11-17
 
-- Repository: `ishak6/Nexus-OS-3000-`
-- Current main head at this snapshot: [`f8fd3970efcdcabbe35b7de65208977ae01b4883`](https://github.com/ishak6/Nexus-OS-3000-/commit/f8fd3970efcdcabbe35b7de65208977ae01b4883).
-- [Quality Checks #111](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44116445716) passed on that exact main commit. Repository/policy checks, Python syntax, 11 Harness tests, 5 Pulse tests, 2 security-baseline tests, GRUB and VM-input regression tests, Qt 6/CMake LUMEN build, and the 8-second offscreen startup smoke test all passed.
-- [Quality Checks #110](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44116314858) initially failed because its new guard also matched the explanatory comment containing `--linux-packages none`. The guard was narrowed to active option lines in commit `f8fd3970efcdcabbe35b7de65208977ae01b4883`; Quality #111 then passed.
-- The boot fix is in [commit `f485fe75fc893aea51b041165061a2f1b144a098`](https://github.com/ishak6/Nexus-OS-3000-/commit/f485fe75fc893aea51b041165061a2f1b144a098), the parent of the current main commit. It removes the live-build option that disabled kernel staging and adds a validator for every active GRUB kernel/initrd reference. Regression tests cover valid staging, missing kernel, missing initrd, and mismatched kernel/initrd pairs.
-- [Build Nexus OS ISO #41](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44116314704) is running on that parent commit. The LUMEN build/staging step passed; the `lb build` step is still running. The kernel/initrd staging validator, ISO checksums, artifact uploads and QEMU VM boot job are not yet complete. Do not claim this build or VM boot passed until the run reports completion.
-- Previous [Build Nexus OS ISO #40](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44110994489) completed the ISO build and extracted GRUB evidence, but its QEMU VM job failed. The extracted GRUB menu references `/live/vmlinuz-6.12.117+deb13-amd64`; the VM OCR reports that file is missing and then `you need to load the kernel first`. Build #40 passed `--linux-packages none` to live-build. Debian's live-build documentation says this disables the kernel installation step, while `binary_linux-image` is the stage that copies the kernel into the live image. The explicit chroot package list did not compensate for the disabled binary staging step. This is a kernel-staging/boot-media failure, not evidence of an XFCE crash.
-- Build #40 ISO artifact: [`nexus-os-3000-iso`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44110994489/artifacts/14340767883), 1,041,390,567 bytes; artifact ZIP digest `dab1234c7ea9aefc51f7c990fd2bd19448f86592adb1cda78e3f1cc704032a70`.
-- Build #40 extracted GRUB evidence: [`nexus-os-grub-boot-evidence`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44110994489/artifacts/14340598020), 1,085 bytes; artifact ZIP digest `1f2de5248233f91b1c4a59bd767ad0115d6811148e1413196dc56814474ffcc7`.
-- Build #40 VM evidence: [`nexus-os-vm-smoke-evidence`](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44110994489/artifacts/14342156370), 82,582 bytes; artifact ZIP digest `ce11a88dc6a2f129e31285dce4d3ead465813ffe222572a88b9fca336a9ac3dc`.
-- The repository has one branch (`main`), no published GitHub releases, and branch protection is not enabled. XFCE remains the fallback; LUMEN is still a prototype, not a verified desktop session.
+- The kernel staging fix is in [commit `f485fe75fc893aea51b041165061a2f1b144a098`](https://github.com/ishak6/Nexus-OS-3000-/commit/f485fe75fc893aea51b041165061a2f1b144a098). It removes the live-build option that disabled kernel staging and adds a validator for GRUB kernel/initrd references.
+- Previous [Build #40](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44110994489) failed because GRUB referenced `/live/vmlinuz-6.12.117+deb13-amd64`, which was absent. The build passed `--linux-packages none`, disabling the live-build kernel staging step. This was a kernel-staging/boot-media failure, not an XFCE crash.
+- [Quality Checks #111](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44116445716) passed after narrowing a guard that had incorrectly matched an explanatory comment; the preceding [Quality #110](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/44116314858) failed for that guard false positive.
 
 ## Next verification tasks
 
-1. Run the ISO workflow with live-build kernel staging enabled; require the generated GRUB kernel/initrd path validator to pass before uploading the ISO.
-2. Re-run the isolated BIOS QEMU boot and require the default GRUB entry to load the kernel and reach XFCE without manual key injection. If it fails, inspect the new guest-visible evidence before changing defaults.
-3. Require the QEMU smoke test to reach the XFCE desktop. Then verify the LUMEN launcher and Pulse adapter inside that live session. Keep XFCE as fallback; do not make LUMEN the default or remove XFCE until LUMEN boot, integration and recovery are independently verified.
-4. Verify sysctl values and systemd-sysctl status in the live VM; then verify AppArmor mode/profiles and ordinary networking.
-5. Continue implementation and acceptance work for the installer, enforced Harness sandbox, Security Center, Privacy Center, networking controls, recovery and signed updates. Package presence or UI placeholders are not completion evidence.
+1. Launch `nexus-lumen` from the live XFCE session and capture process/window evidence; verify the Pulse adapter against real guest telemetry.
+2. Verify sysctl values and systemd-sysctl status in the live VM; then verify AppArmor mode/profiles and ordinary networking.
+3. Implement and test the guided installer, enforced Harness sandbox, Security Center, Privacy Center, recovery and signed updates. Package presence or UI placeholders are not completion evidence.
+4. Add UEFI QEMU boot evidence and a declared hardware/VM compatibility matrix.
+5. Establish SBOM, provenance, signed release and license inventory before release.
+
 ## Minimum VM test plan
 
 1. Create a disposable VM and attach the ISO as virtual optical media.
 2. Boot without attaching a host writable disk.
-3. Confirm live desktop, keyboard, display and network.
+3. Confirm live desktop, keyboard and display; verify network separately because the current smoke test deliberately has no NIC.
 4. Run `scripts/security-audit.sh` and archive its output.
 5. Verify sysctl values using `docs/SECURITY_BASELINE.md`.
 6. Inspect AppArmor mode and loaded profiles; do not infer from package installation.
-7. Test shutdown and reboot.
-8. Record failures and hardware/VM configuration before changing defaults.
-9. Verify LUMEN launcher behavior under the XFCE fallback; do not remove XFCE until a separate LUMEN session passes boot and recovery tests.
+7. Launch `nexus-lumen` in the live XFCE session and capture startup, window and telemetry evidence.
+8. Test shutdown and reboot.
+9. Keep XFCE as fallback until a separate LUMEN session passes boot, integration and recovery tests.
 10. Preserve QEMU logs, screenshots, OCR output, test reports and artifact checksums.
 
 Never test an early image against the user's only copy of important data.
