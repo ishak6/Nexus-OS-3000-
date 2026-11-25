@@ -37,4 +37,3 @@ for entry in \
 done
 
 echo "Live boot packages and XFCE-scoped LUMEN autostart entry are explicitly staged."
-
