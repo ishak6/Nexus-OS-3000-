@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Nexus LUMEN
+Comment=Start the experimental LUMEN workspace inside XFCE for live-session integration testing
+Exec=/usr/bin/nexus-lumen
+TryExec=/usr/bin/nexus-lumen
+Icon=preferences-desktop
+Terminal=false
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-enabled=true
+X-XFCE-Autostart-Phase=Applications
+X-XFCE-Autostart-Notify=false
+NoDisplay=true

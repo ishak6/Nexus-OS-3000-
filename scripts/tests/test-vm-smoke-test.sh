@@ -34,5 +34,9 @@ grep -Fq 'crop-ppm-top-panel.py' "$SMOKE_TEST"
 grep -Fq "grep -Eqi 'Home'" "$SMOKE_TEST"
 grep -Fq "grep -Eqi 'File System'" "$SMOKE_TEST"
 grep -Fq "grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN'" "$SMOKE_TEST"
+# VM must verify a LUMEN window, not merely the XFCE desktop.
+grep -Fq "Nexus LUMEN window marker" "$SMOKE_TEST"
+grep -Fq "lumen-window.txt" "$SMOKE_TEST"
+grep -Fq "A calmer space" "$SMOKE_TEST"
 
 echo "VM smoke-test argument and desktop-marker validation tests passed."

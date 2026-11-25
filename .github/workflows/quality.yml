@@ -39,6 +39,10 @@ jobs:
           test -s lumen/PulseMonitor.cpp
           test -s lumen/PulseMonitor.h
           test -s config/includes.chroot/usr/share/applications/nexus-lumen.desktop
+          test -s config/includes.chroot/etc/xdg/autostart/nexus-lumen.desktop
+          grep -q "OnlyShowIn=XFCE;" config/includes.chroot/etc/xdg/autostart/nexus-lumen.desktop
+          grep -q "Exec=/usr/bin/nexus-lumen" config/includes.chroot/etc/xdg/autostart/nexus-lumen.desktop
+          grep -q "Nexus LUMEN window marker" scripts/vm-smoke-test.sh
           grep -q 'cmake --install build/lumen --prefix /usr' .github/workflows/build-os.yml
           grep -q 'lumen/\*\*' .github/workflows/build-os.yml
           test -s lumen/qml/Main.qml

@@ -30,6 +30,8 @@ QEMU_LOG="$OUT_DIR/qemu.log"
 SCREENSHOT="$OUT_DIR/desktop.ppm"
 OCR_BASE="$OUT_DIR/desktop"
 OCR_TEXT="$OCR_BASE.txt"
+LUMEN_OCR_BASE="$OUT_DIR/lumen-window"
+LUMEN_OCR_TEXT="$LUMEN_OCR_BASE.txt"
 TOP_PANEL_SCREENSHOT="$OUT_DIR/desktop-top-panel.ppm"
 TOP_PANEL_OCR_BASE="$OUT_DIR/desktop-top-panel"
 TOP_PANEL_OCR_TEXT="$TOP_PANEL_OCR_BASE.txt"
@@ -47,7 +49,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-rm -f "$MONITOR_SOCKET" "$SCREENSHOT" "$OCR_TEXT" \
+rm -f "$MONITOR_SOCKET" "$SCREENSHOT" "$OCR_TEXT" "$LUMEN_OCR_TEXT" \
   "$TOP_PANEL_SCREENSHOT" "$TOP_PANEL_OCR_TEXT" \
   "$GRUB_SCREENSHOT" "$GRUB_OCR_TEXT"
 : > "$QEMU_LOG"
@@ -174,6 +176,8 @@ PY
 
   if [[ -s "$SCREENSHOT" ]]; then
     tesseract "$SCREENSHOT" "$OCR_BASE" --psm 6 2>/dev/null || true
+    # Sparse OCR catches the LUMEN window title and workspace heading.
+    tesseract "$SCREENSHOT" "$LUMEN_OCR_BASE" --psm 11 2>/dev/null || true
 
     # Tesseract full-screen PSM 6 can miss the small XFCE top-panel label.
     # Crop the top panel and OCR it separately, while checking desktop icons too.
@@ -185,12 +189,14 @@ PY
       && grep -Eqi 'Home' "$OCR_TEXT" \
       && grep -Eqi 'File System' "$OCR_TEXT" \
       && [[ -s "$TOP_PANEL_OCR_TEXT" ]] \
-      && grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN' "$TOP_PANEL_OCR_TEXT"; then
+      && grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN' "$TOP_PANEL_OCR_TEXT" \
+      && { grep -Eqi 'Nexus LUMEN|A calmer space|NEXUS OS 3000' "$OCR_TEXT" \
+           || grep -Eqi 'Nexus LUMEN|A calmer space|NEXUS OS 3000' "$LUMEN_OCR_TEXT"; }; then
       {
-        echo "PASS: QEMU BIOS boot reached the XFCE desktop."
+        echo "PASS: QEMU BIOS boot reached XFCE and the Nexus LUMEN window marker."
         echo "ISO: $ISO_PATH"
         echo "Attempt: $attempt"
-        echo "Evidence: desktop.ppm, desktop.txt, desktop-top-panel.ppm, and desktop-top-panel.txt"
+        echo "Evidence: desktop.ppm, desktop.txt, lumen-window.txt, desktop-top-panel.ppm, and desktop-top-panel.txt"
         echo "Isolation: TCG, read-only ISO, no host disk, no network."
       } | tee "$RESULT"
       exit 0
@@ -201,8 +207,8 @@ PY
 done
 
 {
-  echo "FAIL: QEMU remained available but the XFCE desktop marker was not detected."
-  echo "The full-screen and top-panel screenshots and OCR output are retained for diagnosis."
+  echo "FAIL: QEMU remained available but XFCE or the Nexus LUMEN window marker was not detected."
+  echo "The full-screen, LUMEN sparse-text, and top-panel OCR outputs are retained for diagnosis."
 } | tee "$RESULT" >&2
 if [[ -s "$GRUB_OCR_TEXT" ]]; then
   echo "--- Post-timeout GRUB OCR output ---" >&2
@@ -215,6 +221,10 @@ fi
 if [[ -s "$TOP_PANEL_OCR_TEXT" ]]; then
   echo "--- Final XFCE top-panel OCR output ---" >&2
   cat "$TOP_PANEL_OCR_TEXT" >&2
+fi
+if [[ -s "$LUMEN_OCR_TEXT" ]]; then
+  echo "--- Final LUMEN sparse-text OCR output ---" >&2
+  cat "$LUMEN_OCR_TEXT" >&2
 fi
 echo "--- QEMU log ---" >&2
 tail -n 80 "$QEMU_LOG" >&2
