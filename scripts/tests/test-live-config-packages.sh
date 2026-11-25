@@ -26,7 +26,7 @@ if [[ ! -s "$AUTOSTART_FILE" ]]; then
   exit 1
 fi
 for entry in \
-  'Exec=/usr/bin/nexus-lumen' \
+  'Exec=/usr/bin/env QT_QUICK_BACKEND=software /usr/bin/nexus-lumen' \
   'TryExec=/usr/bin/nexus-lumen' \
   'OnlyShowIn=XFCE;' \
   'X-GNOME-Autostart-enabled=true'; do

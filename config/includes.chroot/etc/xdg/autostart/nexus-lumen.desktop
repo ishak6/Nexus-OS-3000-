@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Nexus LUMEN
 Comment=Start the experimental LUMEN workspace inside XFCE for live-session integration testing
-Exec=/usr/bin/nexus-lumen
+Exec=/usr/bin/env QT_QUICK_BACKEND=software /usr/bin/nexus-lumen
 TryExec=/usr/bin/nexus-lumen
 Icon=preferences-desktop
 Terminal=false

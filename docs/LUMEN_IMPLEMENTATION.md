@@ -26,7 +26,7 @@ The CI quality workflow compiles the app and starts it with Qt's offscreen platf
 
 1. Build and launch the prototype in CI.
 2. Package the app, Pulse sampler, desktop launcher and XFCE-scoped XDG autostart entry into the Debian live ISO; keep XFCE as the active fallback.
-3. Verify the LUMEN window and read-only Pulse telemetry in the booted live ISO under XFCE. The VM smoke test requires a visible LUMEN text marker as well as the XFCE panel.
+3. Verify the LUMEN window and read-only Pulse telemetry in the booted live ISO under XFCE. The VM smoke test requires visible LUMEN workspace/card content (not just its window title) as well as the XFCE panel. The XFCE autostart entry requests Qt Quick's software backend for predictable rendering in a TCG VM; this is a compatibility measure, not a performance claim.
 4. Test keyboard navigation, scaling, reduced motion, and memory use in a VM.
 5. Expand real system telemetry and permission-status adapters.
 6. Only after stability and recovery tests, create a selectable LUMEN login session. Do not remove XFCE as the fallback until that session is verified.

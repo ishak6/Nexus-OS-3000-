@@ -176,7 +176,7 @@ PY
 
   if [[ -s "$SCREENSHOT" ]]; then
     tesseract "$SCREENSHOT" "$OCR_BASE" --psm 6 2>/dev/null || true
-    # Sparse OCR catches the LUMEN window title and workspace heading.
+    # Sparse OCR catches the LUMEN workspace heading and system-card labels.
     tesseract "$SCREENSHOT" "$LUMEN_OCR_BASE" --psm 11 2>/dev/null || true
 
     # Tesseract full-screen PSM 6 can miss the small XFCE top-panel label.
@@ -190,10 +190,10 @@ PY
       && grep -Eqi 'File System' "$OCR_TEXT" \
       && [[ -s "$TOP_PANEL_OCR_TEXT" ]] \
       && grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN' "$TOP_PANEL_OCR_TEXT" \
-      && { grep -Eqi 'Nexus LUMEN|A calmer space|NEXUS OS 3000' "$OCR_TEXT" \
-           || grep -Eqi 'Nexus LUMEN|A calmer space|NEXUS OS 3000' "$LUMEN_OCR_TEXT"; }; then
+      && { grep -Eqi 'A calmer space|CPU LOAD|NEXUS OS 3000' "$OCR_TEXT" \
+           || grep -Eqi 'A calmer space|CPU LOAD|NEXUS OS 3000' "$LUMEN_OCR_TEXT"; }; then
       {
-        echo "PASS: QEMU BIOS boot reached XFCE and the Nexus LUMEN window marker."
+        echo "PASS: QEMU BIOS boot reached XFCE and the Nexus LUMEN UI content marker."
         echo "ISO: $ISO_PATH"
         echo "Attempt: $attempt"
         echo "Evidence: desktop.ppm, desktop.txt, lumen-window.txt, desktop-top-panel.ppm, and desktop-top-panel.txt"
@@ -207,7 +207,7 @@ PY
 done
 
 {
-  echo "FAIL: QEMU remained available but XFCE or the Nexus LUMEN window marker was not detected."
+  echo "FAIL: QEMU remained available but XFCE or visible Nexus LUMEN UI content was not detected."
   echo "The full-screen, LUMEN sparse-text, and top-panel OCR outputs are retained for diagnosis."
 } | tee "$RESULT" >&2
 if [[ -s "$GRUB_OCR_TEXT" ]]; then
