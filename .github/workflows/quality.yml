@@ -34,6 +34,8 @@ jobs:
           test -s scripts/tests/test-live-config-packages.sh
           test -s scripts/tests/test-grub-boot-config.sh
           test -s scripts/tests/test-vm-smoke-test.sh
+          test -s scripts/verify-vm-desktop-markers.py
+          test -s scripts/tests/test-verify-vm-desktop-markers.py
           test -s lumen/CMakeLists.txt
           test -s lumen/main.cpp
           test -s lumen/PulseMonitor.cpp
@@ -112,8 +114,9 @@ jobs:
           set -euo pipefail
           bash -n scripts/security-audit.sh
           bash -n scripts/vm-smoke-test.sh
-          python3 -m py_compile scripts/crop-ppm-top-panel.py
+          python3 -m py_compile scripts/crop-ppm-top-panel.py scripts/verify-vm-desktop-markers.py
           python3 scripts/tests/test-crop-ppm-top-panel.py
+          python3 scripts/tests/test-verify-vm-desktop-markers.py
           bash -n scripts/configure-live-bootloader.sh
           bash -n scripts/verify-live-kernel-staging.sh
           bash -n scripts/tests/test-live-kernel-staging.sh
