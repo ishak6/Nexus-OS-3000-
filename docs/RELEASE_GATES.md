@@ -1,3 +1,13 @@
+## Monitoring follow-up — 2026-11-26
+
+- Current `main` HEAD before this documentation update: `d38b3326c6c367bc42474368f79648da09e84f00`. The code/workflow fix candidate is `d861ecbc7b87c25641c458e7e418dd402219fc32`; subsequent `d38b332` is documentation-only.
+- [Quality Checks #138](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/45842142207) passed on `d861ecb`; [Quality #139](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/45842205068) passed on `d38b332`. Both include the new marker-checker test and the Qt/QML LUMEN build/offscreen startup.
+- [Build Nexus OS ISO #50](https://github.com/ishak6/Nexus-OS-3000-/actions/runs/45842142177) is still running on `d861ecb`. VM preflight, the new OCR marker regression tests, Debian Trixie dependency installation, live configuration, LUMEN staging, and live-config package verification passed. The `Build ISO` step was in progress at the last check; no #50 ISO artifact or VM result is yet verified.
+- The #47 ISO and VM artifacts remain available. Raw ISO SHA-256: `6a568973d061b1ead2236797d3b23b0db68a67d41a52cd483e18bf4dd4ca2701`; raw size 1,172,379,268 bytes. #47's visible LUMEN UI screenshot is valid evidence, although the old detector failed because foreground LUMEN obscured desktop icons.
+- The new marker checker and five regression tests passed locally (5/5), and the checker passed against the actual Build #47 `desktop.txt`, `desktop-top-panel.txt`, and `lumen-window.txt` extracted from artifact `15036468992`.
+- Intermediate Quality #132–#135 and ISO #49 failures occurred during the multi-commit rollout: the VM script switched to the new marker helper before the static VM test was updated, so the old test still required Home/File System OCR strings. The static test was updated in `d6d476d`; helper tests were then added to both Quality and ISO preflight. Quality #136–#139 passed, and ISO #50's preflight passed. These are resolved rollout failures, not current code failures.
+- Latest main still requires independent verification of LUMEN session integration, UEFI QEMU boot, installer, runtime Harness sandbox, Security/Privacy enforcement, networking runtime, recovery, signed updates and release provenance/SBOM. Keep XFCE fallback.
+
 ## Current evidence update — 2026-11-26
 
 - Current main after the detector correction and CI wiring: `d861ecbc7b87c25641c458e7e418dd402219fc32`; the correction was made across commits `c0f8ae7`, `8c86ed6`, `7a3edaa`, `de14bce`, `d6d476d`, `fa09fb1`, and `d861ecb`.
