@@ -7,6 +7,8 @@ on:
     paths:
       - "config/**"
       - "scripts/vm-smoke-test.sh"
+      - "scripts/verify-vm-desktop-markers.py"
+      - "scripts/tests/test-verify-vm-desktop-markers.py"
       - "scripts/configure-live-bootloader.sh"
       - "lumen/**"
       - "pulse/**"
@@ -33,8 +35,9 @@ jobs:
           set -euo pipefail
           bash -n scripts/vm-smoke-test.sh
           bash scripts/tests/test-vm-smoke-test.sh
-          python3 -m py_compile scripts/crop-ppm-top-panel.py
+          python3 -m py_compile scripts/crop-ppm-top-panel.py scripts/verify-vm-desktop-markers.py
           python3 scripts/tests/test-crop-ppm-top-panel.py
+          python3 scripts/tests/test-verify-vm-desktop-markers.py
 
       - name: Install Debian Trixie live-build and ISO tooling
         run: |
