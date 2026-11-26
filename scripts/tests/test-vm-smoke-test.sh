@@ -28,15 +28,13 @@ grep -Fq 'ISO is missing or empty:' <<<"$empty_output"
 grep -Fq 'grub-after-timeout.ppm' "$SMOKE_TEST"
 grep -Fq 'grub-after-timeout.txt' "$SMOKE_TEST"
 
-# The desktop check must inspect the XFCE top panel separately from desktop icons.
+# LUMEN may cover XFCE desktop icons; verify panel/live-user and app content.
 grep -Fq 'desktop-top-panel.ppm' "$SMOKE_TEST"
 grep -Fq 'crop-ppm-top-panel.py' "$SMOKE_TEST"
-grep -Fq "grep -Eqi 'Home'" "$SMOKE_TEST"
-grep -Fq "grep -Eqi 'File System'" "$SMOKE_TEST"
-grep -Fq "grep -Eqi 'Applications|Whisker Menu|Nexus OS|Nexus LUMEN'" "$SMOKE_TEST"
-# VM must verify a LUMEN window, not merely the XFCE desktop.
-grep -Fq "Nexus LUMEN UI content marker" "$SMOKE_TEST"
-grep -Fq "lumen-window.txt" "$SMOKE_TEST"
-grep -Fq "A calmer space|CPU LOAD|NEXUS OS 3000" "$SMOKE_TEST"
+grep -Fq 'verify-vm-desktop-markers.py' "$SMOKE_TEST"
+grep -Fq 'Nexus LUMEN UI content marker' "$SMOKE_TEST"
+grep -Fq 'lumen-window.txt' "$SMOKE_TEST"
+! grep -Fq "grep -Eqi 'Home'" "$SMOKE_TEST"
+! grep -Fq "grep -Eqi 'File System'" "$SMOKE_TEST"
 
 echo "VM smoke-test argument and desktop-marker validation tests passed."
