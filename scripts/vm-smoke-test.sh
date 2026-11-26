@@ -190,8 +190,7 @@ PY
     if [[ -s "$OCR_TEXT" && -s "$TOP_PANEL_OCR_TEXT" && -s "$LUMEN_OCR_TEXT" ]] &&
       python3 scripts/verify-vm-desktop-markers.py "$OCR_TEXT" "$TOP_PANEL_OCR_TEXT" "$LUMEN_OCR_TEXT"; then
       {
-        echo "PASS: QEMU BIOS boot reached XFCE with visible Nexus LUMEN workspace content."
-        echo "PASS: QEMU BIOS boot reached XFCE and the Nexus LUMEN UI content marker."
+        echo "PASS: QEMU BIOS boot reached XFCE with visible Nexus LUMEN UI content marker."
         echo "ISO: $ISO_PATH"
         echo "Attempt: $attempt"
         echo "Evidence: desktop.ppm, desktop.txt, lumen-window.txt, desktop-top-panel.ppm, and desktop-top-panel.txt"
